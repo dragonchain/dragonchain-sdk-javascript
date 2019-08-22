@@ -4,8 +4,10 @@ the requirements below.
 
 Bug fixes and new features should include tests.
 
-Contributors guide: https://github.com/dragonchain-inc/dragonchain-sdk-node/blob/master/CONTRIBUTING.md
+Contributors guide: https://github.com/dragonchain/dragonchain-sdk-javascript/blob/master/CONTRIBUTING.md
 -->
+
+### Description
 
 ##### Checklist
 <!-- Remove items that do not apply. For completed items, change [ ] to [x]. -->

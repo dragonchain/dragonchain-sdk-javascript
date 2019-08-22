@@ -16,6 +16,8 @@
     - `getDefaultInterchainNetwork`
     - `signBitcoinTransaction`
     - `signEthereumTransaction`
+- **Packaging:**
+  - Moved repository to [new location](https://github.com/dragonchain/dragonchain-sdk-javascript)
 - **Development:**
   - Update development dependencies
 

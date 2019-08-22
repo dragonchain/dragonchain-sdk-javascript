@@ -1,19 +1,19 @@
 {
   "name": "dragonchain-sdk",
   "version": "3.2.0",
-  "description": "Dragonchain SDK for Node",
+  "description": "Dragonchain SDK for Node.JS and the Browser",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/dragonchain-inc/dragonchain-sdk-node#readme",
+  "homepage": "https://github.com/dragonchain/dragonchain-sdk-javascript#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dragonchain-inc/dragonchain-sdk-node.git"
+    "url": "git+https://github.com/dragonchain/dragonchain-sdk-javascript.git"
   },
   "keywords": [
     "dragonchain",
     "sdk"
   ],
   "bugs": {
-    "url": "https://github.com/dragonchain-inc/dragonchain-sdk-node/issues"
+    "url": "https://github.com/dragonchain/dragonchain-sdk-javascript/issues"
   },
   "author": "Dragonchain, Inc. <support@dragonchain.com>",
   "main": "dist/index.js",
