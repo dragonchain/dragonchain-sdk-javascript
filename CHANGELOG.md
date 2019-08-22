@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.2.0
+
+- **Feature:**
+  - Add deprecation warnings for `createBitcoinTransaction`, `createEthereumTransaction`, and `getPublicBlockchainAddresses`
+  - Add support for new interchain management endpoints with client functions:
+    - `createBitcoinInterchain`
+    - `createEthereumInterchain`
+    - `updateBitcoinInterchain`
+    - `updateEthereumInterchain`
+    - `getInterchainNetwork`
+    - `deleteInterchainNetwork`
+    - `listInterchainNetworks`
+    - `setDefaultInterchainNetwork`
+    - `getDefaultInterchainNetwork`
+    - `signBitcoinTransaction`
+    - `signEthereumTransaction`
+- **Development:**
+  - Update development dependencies
+
 ## 3.1.0
 
 - **Feature:**
