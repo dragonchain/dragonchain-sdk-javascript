@@ -145,11 +145,45 @@ describe('DragonchainClient', () => {
       });
     });
 
+    describe('.queryTransactions', () => {
+      it('calls #fetch() with correct params', async () => {
+        await client.queryTransactions({
+          transactionType: 'testing',
+          redisearchQuery: 'banana',
+          verbatim: false,
+          limit: 2,
+          offset: 1,
+          idsOnly: false,
+          sortAscending: false,
+          sortBy: 'whatever'
+        });
+        assert.calledWith(
+          fetch,
+          'fakeUrl/v1/transaction?transaction_type=testing&q=banana&offset=1&limit=2&verbatim=false&id_only=false&sort_by=whatever&sort_asc=false',
+          expectedFetchOptions
+        );
+      });
+
+      it('defaults offset and limit', async () => {
+        await client.queryTransactions({
+          transactionType: 'test',
+          redisearchQuery: 'yeah'
+        });
+        assert.calledWith(fetch, 'fakeUrl/v1/transaction?transaction_type=test&q=yeah&offset=0&limit=10', expectedFetchOptions);
+      });
+    });
+
     describe('.queryBlocks', () => {
       it('calls #fetch() with correct params', async () => {
-        const params = 'banana';
-        await client.queryBlocks({ luceneQuery: params });
-        assert.calledWith(fetch, `fakeUrl/v1/block?q=${params}&offset=0&limit=10`, expectedFetchOptions);
+        await client.queryBlocks({ redisearchQuery: 'banana', limit: 2, offset: 1, idsOnly: false, sortAscending: false, sortBy: 'something' });
+        assert.calledWith(fetch, `fakeUrl/v1/block?q=banana&offset=1&limit=2&id_only=false&sort_by=something&sort_asc=false`, expectedFetchOptions);
+      });
+
+      it('defaults offset and limit', async () => {
+        await client.queryBlocks({
+          redisearchQuery: 'yeah'
+        });
+        assert.calledWith(fetch, 'fakeUrl/v1/block?q=yeah&offset=0&limit=10', expectedFetchOptions);
       });
     });
 
@@ -274,6 +308,33 @@ describe('DragonchainClient', () => {
         await client.createTransaction(transactionCreatePayload);
         const obj = { ...expectedFetchOptions, body: JSON.stringify(expectedBody) };
         assert.calledWith(fetch, 'fakeUrl/v1/transaction', obj);
+      });
+    });
+
+    describe('.createTransactionType', () => {
+      it('calls #fetch() with correct params', async () => {
+        const expectedBody = {
+          version: '2',
+          txn_type: 'testing',
+          custom_indexes: [
+            {
+              path: 'testPath',
+              field_name: 'someField',
+              type: 'text',
+              options: {
+                no_index: false,
+                weight: 0.5,
+                sortable: true
+              }
+            }
+          ]
+        };
+        await client.createTransactionType({
+          transactionType: 'testing',
+          customIndexFields: [{ path: 'testPath', fieldName: 'someField', type: 'text', options: { noIndex: false, sortable: true, weight: 0.5 } }]
+        });
+        const obj = { ...expectedFetchOptions, body: JSON.stringify(expectedBody) };
+        assert.calledWith(fetch, 'fakeUrl/v1/transaction-type', obj);
       });
     });
 

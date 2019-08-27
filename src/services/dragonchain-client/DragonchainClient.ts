@@ -268,39 +268,78 @@ export class DragonchainClient {
   };
 
   /**
-   * Query transactions using ElasticSearch query-string syntax
+   * Query transactions using Redisearch query-string syntax
    *
-   * For more information on how to use the ElasticSearch query-string syntax checkout the Elastic Search documentation:
-   * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
+   * For more information on how to use the Redisearch query-string syntax checkout their documentation:
+   * https://oss.redislabs.com/redisearch/Query_Syntax.html
+   *
+   * Note that transactions have the following fields:
+   * timestamp - sortable Numeric field
+   * block_id - sortable Numeric field
+   * tag - Text field
+   *
+   * Transaction types can also have additional custom fields if specified when creating the relevant transaction type/smart contract
+   *
    * @example
    * ```javascript
-   * myClient.queryTransactions({luceneQuery: 'tag:(bananas OR apples)'}).then( ...do stuff )
+   * myClient.queryTransactions({transactionType: 'example', redisearchQuery: 'somethingInTxnTag', sortBy: 'timestamp'}).then( ...do stuff )
    * ```
    */
-  public queryTransactions = async (
-    options: {
-      /**
-       * lucene query to use for this query request
-       * @example `is_serial:true`
-       */
-      luceneQuery?: string;
-      /**
-       * Sort syntax of 'field:direction'
-       * @example `txn_type:asc`
-       */
-      sort?: string;
-      /**
-       * Pagination offset integer of query (default 0)
-       */
-      offset?: number;
-      /**
-       * Pagination limit integer of query (default 10)
-       */
-      limit?: number;
-    } = {}
-  ) => {
-    const queryParams: string = this.getLuceneParams(options.luceneQuery, options.sort, options.offset || 0, options.limit || 10);
-    return (await this.get(`/v1/transaction${queryParams}`)) as Response<QueryResult<L1DragonchainTransactionFull>>;
+  public queryTransactions = async (options: {
+    /**
+     * The single transaction type to query
+     */
+    transactionType: string;
+    /**
+     * Redisearch query syntax string to search with
+     * https://oss.redislabs.com/redisearch/Query_Syntax.html
+     * @example
+     * word1|word2
+     */
+    redisearchQuery: string;
+    /**
+     * Whether or not to use redisearch's VERBATIM
+     * (if true, no stemming occurs on the query)
+     */
+    verbatim?: boolean;
+    /**
+     * Pagination offset of query (default 0)
+     * Must be an integer
+     */
+    offset?: number;
+    /**
+     * Pagination limit (default 10)
+     * Must be an integer
+     */
+    limit?: number;
+    /**
+     * The name of the field to sort by
+     */
+    sortBy?: string;
+    /**
+     * If sortBy is set, this sorts the results by that field in ascending order
+     * (descending if false)
+     */
+    sortAscending?: boolean;
+    /**
+     * If true, rather than an array of transaction objects,
+     * it will return an array of transaction id strings instead
+     */
+    idsOnly?: boolean;
+  }) => {
+    const queryParams: any = {
+      transaction_type: options.transactionType,
+      q: options.redisearchQuery,
+      offset: options.offset || 0,
+      limit: options.limit || 10
+    };
+    if (options.verbatim !== undefined) queryParams.verbatim = options.verbatim;
+    if (options.idsOnly !== undefined) queryParams.id_only = options.idsOnly;
+    if (options.sortBy !== undefined) {
+      queryParams.sort_by = options.sortBy;
+      if (options.sortAscending !== undefined) queryParams.sort_asc = options.sortAscending;
+    }
+    return (await this.get(`/v1/transaction${this.generateQueryString(queryParams)}`)) as Response<QueryResult<L1DragonchainTransactionFull>>;
   };
 
   /**
@@ -317,39 +356,65 @@ export class DragonchainClient {
   };
 
   /**
-   * Query blocks using ElasticSearch query-string syntax
+   * Query transactions using Redisearch query-string syntax
    *
-   * For more information on how to use the ElasticSearch query-string syntax checkout the Elastic Search documentation:
-   * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
+   * For more information on how to use the Redisearch query-string syntax checkout their documentation:
+   * https://oss.redislabs.com/redisearch/Query_Syntax.html
+   *
+   * Note that blocks have the following fields:
+   * block_id - sortable Numeric field
+   * timestamp - sortable Numeric field
+   * prev_id - sortable Numeric field
+   *
    * @example
    * ```javascript
-   * myClient.queryBlocks({sort: 'block_id:asc'}).then( ...do stuff )
+   * myClient.queryBlocks({redisearchQuery: '*', sortBy: 'block_id'}).then( ...do stuff )
    * ```
    */
-  public queryBlocks = async (
-    options: {
-      /**
-       * lucene query to use for this query request
-       * @example `is_serial:true`
-       */
-      luceneQuery?: string;
-      /**
-       * Sort syntax of 'field:direction'
-       * @example `block_id:asc`
-       */
-      sort?: string;
-      /**
-       * Pagination offset integer of query (default 0)
-       */
-      offset?: number;
-      /**
-       * Pagination limit integer of query (default 10)
-       */
-      limit?: number;
-    } = {}
-  ) => {
-    const queryParams: string = this.getLuceneParams(options.luceneQuery, options.sort, options.offset || 0, options.limit || 10);
-    return (await this.get(`/v1/block${queryParams}`)) as Response<QueryResult<BlockSchemaType>>;
+  public queryBlocks = async (options: {
+    /**
+     * Redisearch query syntax string to search with
+     * https://oss.redislabs.com/redisearch/Query_Syntax.html
+     * @example
+     * word1|word2
+     */
+    redisearchQuery: string;
+    /**
+     * Pagination offset of query (default 0)
+     * Must be an integer
+     */
+    offset?: number;
+    /**
+     * Pagination limit (default 10)
+     * Must be an integer
+     */
+    limit?: number;
+    /**
+     * The name of the field to sort by
+     */
+    sortBy?: string;
+    /**
+     * If sortBy is set, this sorts the results by that field in ascending order
+     * (descending if false)
+     */
+    sortAscending?: boolean;
+    /**
+     * If true, rather than an array of block objects,
+     * it will return an array of block id strings instead
+     */
+    idsOnly?: boolean;
+  }) => {
+    const queryParams: any = {
+      q: options.redisearchQuery,
+      offset: options.offset || 0,
+      limit: options.limit || 10
+    };
+    if (options.idsOnly !== undefined) queryParams.id_only = options.idsOnly;
+    if (options.sortBy !== undefined) {
+      queryParams.sort_by = options.sortBy;
+      if (options.sortAscending !== undefined) queryParams.sort_asc = options.sortAscending;
+    }
+    return (await this.get(`/v1/block${this.generateQueryString(queryParams)}`)) as Response<QueryResult<BlockSchemaType>>;
   };
 
   /**
@@ -1175,34 +1240,6 @@ export class DragonchainClient {
   /**
    * @hidden
    */
-  private getLuceneParams = (query?: string, sort?: string, offset = 0, limit = 10) => {
-    const params = new Map();
-    if (query) {
-      params.set('q', query);
-    }
-    if (sort) {
-      params.set('sort', sort);
-    }
-    params.set('offset', String(offset));
-    params.set('limit', String(limit));
-
-    return this.generateQueryString(params);
-  };
-
-  /**
-   * @hidden
-   */
-  private generateQueryString = (queryObject: Map<string, string>) => {
-    const query = '?';
-    const params = UrlSearchParams(queryObject);
-    const queryString = `${query}${params}`;
-
-    return queryString;
-  };
-
-  /**
-   * @hidden
-   */
   private async get(path: string, jsonParse = true) {
     return this.makeRequest(path, 'GET', undefined, undefined, jsonParse);
   }
@@ -1248,7 +1285,7 @@ export class DragonchainClient {
         path: customIndexField.path,
         field_name: customIndexField.fieldName,
         type: customIndexField.type
-      }
+      };
       if (customIndexField.options) {
         const optionsBody: any = {};
         if (customIndexField.options.noIndex !== undefined) optionsBody.no_index = customIndexField.options.noIndex;
@@ -1269,6 +1306,11 @@ export class DragonchainClient {
     });
     return returnList;
   };
+
+  /**
+   * @hidden
+   */
+  private generateQueryString = (queryObject: Map<string, string>) => `?${UrlSearchParams(queryObject)}`;
 
   /**
    * @hidden

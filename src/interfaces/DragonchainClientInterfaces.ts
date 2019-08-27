@@ -919,7 +919,7 @@ export interface SimpleResponse {
 
 export interface CustomTextFieldOptions {
   weight?: number;
-  noStem?: boolean
+  noStem?: boolean;
   sortable?: boolean;
   noIndex?: boolean;
 }
