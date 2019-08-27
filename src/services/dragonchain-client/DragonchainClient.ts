@@ -23,6 +23,7 @@ import {
   DragonchainTransactionCreateResponse,
   DragonchainBulkTransactionCreateResponse,
   SmartContractAtRest,
+  SmartContractList,
   SupportedHTTP,
   FetchOptions,
   L1DragonchainStatusResult,
@@ -48,7 +49,10 @@ import {
   EthereumInterchainNetwork,
   BitcoinInterchainNetwork,
   SupportedInterchains,
-  InterchainNetworkList
+  InterchainNetworkList,
+  CustomTextFieldOptions,
+  CustomNumberFieldOptions,
+  CustomTagFieldOptions
 } from '../../interfaces/DragonchainClientInterfaces';
 import { CredentialService, HmacAlgorithm } from '../credential-service/CredentialService';
 import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
@@ -426,6 +430,10 @@ export class DragonchainClient {
      * @example ZXhhbXBsZVVzZXI6ZXhhbXBsZVBhc3N3b3JkCg==
      */
     registryCredentials?: string;
+    /**
+     * The custom indexes that should be associated with the transaction type for this smart contract
+     */
+    customIndexFields?: TransactionTypeCustomIndex[];
   }) => {
     if (!options.transactionType) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionType` is required');
     if (!options.image) throw new FailureByDesign('PARAM_ERROR', 'Parameter `image` is required');
@@ -446,6 +454,7 @@ export class DragonchainClient {
     if (options.scheduleIntervalInSeconds) body.seconds = options.scheduleIntervalInSeconds;
     if (options.cronExpression) body.cron = options.cronExpression;
     if (options.registryCredentials) body.auth = options.registryCredentials;
+    if (options.customIndexFields) body.custom_indexes = this.validateAndBuildCustomIndexFieldsArray(options.customIndexFields);
     return (await this.post('/v1/contract', body)) as Response<SmartContractAtRest>;
   };
 
@@ -587,40 +596,9 @@ export class DragonchainClient {
   };
 
   /**
-   * Query smart contracts using ElasticSearch query-string syntax
-   *
-   * For more information on how to use the ElasticSearch query-string syntax checkout the Elastic Search documentation:
-   * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
-   * @example
-   * ```javascript
-   * myClient.querySmartContracts({ luceneQuery: 'tag:(bananas OR apples)' }).then( ...do stuff )
-   * ```
+   * Get all smart contracts on a chain
    */
-  public querySmartContracts = async (
-    options: {
-      /**
-       * lucene query to use for this query request
-       * @example `is_serial:true`
-       */
-      luceneQuery?: string;
-      /**
-       * Sort syntax of 'field:direction'
-       * @example `txn_type:asc`
-       */
-      sort?: string;
-      /**
-       * Pagination offset integer of query (default 0)
-       */
-      offset?: number;
-      /**
-       * Pagination limit integer of query (default 10)
-       */
-      limit?: number;
-    } = {}
-  ) => {
-    const queryParams: string = this.getLuceneParams(options.luceneQuery, options.sort, options.offset || 0, options.limit || 10);
-    return (await this.get(`/v1/contract${queryParams}`)) as Response<QueryResult<SmartContractAtRest>>;
-  };
+  public listSmartContracts = async () => (await this.get('/v1/contract')) as Response<SmartContractList>;
 
   /**
    * Get chain ids for the pending verifications for a block. Note that this is only relevant for level 1 chains.
@@ -724,14 +702,14 @@ export class DragonchainClient {
     /**
      * The custom indexes that should be associated with this transaction type
      */
-    customIndexes?: TransactionTypeCustomIndex[];
+    customIndexFields?: TransactionTypeCustomIndex[];
   }) => {
     if (!options.transactionType) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionType` is required');
     const body: any = {
-      version: '1',
+      version: '2',
       txn_type: options.transactionType
     };
-    if (options.customIndexes) body.custom_indexes = options.customIndexes;
+    if (options.customIndexFields) body.custom_indexes = this.validateAndBuildCustomIndexFieldsArray(options.customIndexFields);
     return (await this.post('/v1/transaction-type', body)) as Response<SimpleResponse>;
   };
 
@@ -753,28 +731,6 @@ export class DragonchainClient {
    */
   public listTransactionTypes = async () => {
     return (await this.get('/v1/transaction-types')) as Response<TransactionTypeListResponse>;
-  };
-
-  /**
-   * Updates an existing transaction type with new custom indexes
-   */
-  public updateTransactionType = async (options: {
-    /**
-     * The name of the transaction type to update
-     */
-    transactionType: string;
-    /**
-     * The custom indexes that should be updated onto the transaction type
-     */
-    customIndexes: TransactionTypeCustomIndex[];
-  }) => {
-    if (!options.transactionType) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionType` is required');
-    if (!options.customIndexes) throw new FailureByDesign('PARAM_ERROR', 'Parameter `customIndexes` is required');
-    const body = {
-      version: '1',
-      custom_indexes: options.customIndexes
-    };
-    return (await this.put(`/v1/transaction-type/${options.transactionType}`, body)) as Response<SimpleResponse>;
   };
 
   /**
@@ -1281,6 +1237,38 @@ export class DragonchainClient {
   private async delete(path: string) {
     return this.makeRequest(path, 'DELETE');
   }
+
+  /**
+   * @hidden
+   */
+  private validateAndBuildCustomIndexFieldsArray = (customIndexFields: TransactionTypeCustomIndex[]) => {
+    const returnList: any[] = [];
+    customIndexFields.forEach(customIndexField => {
+      const customTransactionFieldBody: any = {
+        path: customIndexField.path,
+        field_name: customIndexField.fieldName,
+        type: customIndexField.type
+      }
+      if (customIndexField.options) {
+        const optionsBody: any = {};
+        if (customIndexField.options.noIndex !== undefined) optionsBody.no_index = customIndexField.options.noIndex;
+        if (customIndexField.type === 'tag') {
+          if ((customIndexField.options as CustomTagFieldOptions).seperator !== undefined) optionsBody.seperator = (customIndexField.options as CustomTagFieldOptions).seperator;
+        } else if (customIndexField.type === 'text') {
+          if ((customIndexField.options as CustomTextFieldOptions).noStem !== undefined) optionsBody.no_stem = (customIndexField.options as CustomTextFieldOptions).noStem;
+          if ((customIndexField.options as CustomTextFieldOptions).weight !== undefined) optionsBody.weight = (customIndexField.options as CustomTextFieldOptions).weight;
+          if ((customIndexField.options as CustomTextFieldOptions).sortable !== undefined) optionsBody.sortable = (customIndexField.options as CustomTextFieldOptions).sortable;
+        } else if (customIndexField.type === 'number') {
+          if ((customIndexField.options as CustomNumberFieldOptions).sortable !== undefined) optionsBody.sortable = (customIndexField.options as CustomNumberFieldOptions).sortable;
+        } else {
+          throw new FailureByDesign('PARAM_ERROR', 'Parameter `customIndexFields[].type must be `tag`, `text`, or `number`');
+        }
+        customTransactionFieldBody.options = optionsBody;
+      }
+      returnList.push(customTransactionFieldBody);
+    });
+    return returnList;
+  };
 
   /**
    * @hidden

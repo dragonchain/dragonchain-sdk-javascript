@@ -153,11 +153,10 @@ describe('DragonchainClient', () => {
       });
     });
 
-    describe('.querySmartContracts', () => {
+    describe('.listSmartContracts', () => {
       it('calls #fetch() with correct params', async () => {
-        const params = 'banana';
-        await client.querySmartContracts({ luceneQuery: params });
-        assert.calledWith(fetch, `fakeUrl/v1/contract?q=${params}&offset=0&limit=10`, expectedFetchOptions);
+        await client.listSmartContracts();
+        assert.calledWith(fetch, `fakeUrl/v1/contract`, expectedFetchOptions);
       });
     });
 
