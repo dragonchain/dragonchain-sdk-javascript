@@ -12,9 +12,9 @@ Talk to your dragonchain.
 
 ## Docs
 
-- [latest](https://node-sdk-docs.dragonchain.com/latest)
+Full docs for the SDK [can be found here](https://node-sdk-docs.dragonchain.com/latest).
 
-### Installation
+## Installation
 
 ```sh
 npm i dragonchain-sdk --save
