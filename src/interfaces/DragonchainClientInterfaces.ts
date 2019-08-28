@@ -925,7 +925,7 @@ export interface CustomTextFieldOptions {
 }
 
 export interface CustomTagFieldOptions {
-  seperator?: string;
+  separator?: string;
   noIndex?: boolean;
 }
 

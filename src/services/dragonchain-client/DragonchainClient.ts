@@ -1290,7 +1290,7 @@ export class DragonchainClient {
         const optionsBody: any = {};
         if (customIndexField.options.noIndex !== undefined) optionsBody.no_index = customIndexField.options.noIndex;
         if (customIndexField.type === 'tag') {
-          if ((customIndexField.options as CustomTagFieldOptions).seperator !== undefined) optionsBody.seperator = (customIndexField.options as CustomTagFieldOptions).seperator;
+          if ((customIndexField.options as CustomTagFieldOptions).separator !== undefined) optionsBody.separator = (customIndexField.options as CustomTagFieldOptions).separator;
         } else if (customIndexField.type === 'text') {
           if ((customIndexField.options as CustomTextFieldOptions).noStem !== undefined) optionsBody.no_stem = (customIndexField.options as CustomTextFieldOptions).noStem;
           if ((customIndexField.options as CustomTextFieldOptions).weight !== undefined) optionsBody.weight = (customIndexField.options as CustomTextFieldOptions).weight;

@@ -139,7 +139,7 @@ If you rely on custom indexes and queries, this section will guide you through k
 Custom Indexing in version 4.0.0 and later uses Redisearch. To create a custom index in these versions, you must create a new index using [Redisearch Fields](https://oss.redislabs.com/redisearch/Commands.html#field_options).
 Dragonchain version 4.0.0 supports the use of `text`, `tag`, and `number` fields.
 Your custom indexes may further be customized by specifying options.
-Options for `text` fields include `weight`, `noStem`, `sortable`, and `noIndex`. Options for `tag` fields include `seperator` and `noIndex`. Options for `number` fields include `sortable` and `noIndex`.
+Options for `text` fields include `weight`, `noStem`, `sortable`, and `noIndex`. Options for `tag` fields include `separator` and `noIndex`. Options for `number` fields include `sortable` and `noIndex`.
 Just like with the previous indexing solution, each field must have a `path` and a `fieldName` (previously `key`) to uniquely identify it within a payload.
 
 Querying on version 4.0.0 and later uses a different query syntax.
