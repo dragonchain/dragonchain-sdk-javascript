@@ -129,29 +129,43 @@ To reset the logger back to default (so it doesn't output anymore), simply calle
 
 ### Migrating from version 3.X.X to version 4
 
-If you update your dragonchain from version 3.X.X to version 4.0.0 or later, you will lose access to your version 3.X.X custom indexes. More information can be found [here](https://dragonchain-core-docs.dragonchain.com/latest/deployment/migrating_v4.html).
+If you update your dragonchain from version 3.X.X to version 4.0.0 or later, you will lose access to your version 3.X.X custom indexes.
+More information can be found [here](https://dragonchain-core-docs.dragonchain.com/latest/deployment/migrating_v4.html).
 
-Transactions from before this update will still exist and blockchain integrity will not be compromised. If there are important transactions that you would like to query from before the update, we suggest saving the transaction ids and getting the transactions directly. If you rely on custom indexes and queries, this section will guide you through key differences.
+Transactions from before this update will still exist, and blockchain integrity will not be compromised.
+If there are important transactions that you would like to query from before the update, we suggest saving the transaction ids and getting the transactions directly.
+If you rely on custom indexes and queries, this section will guide you through key differences.
 
-Custom Indexing in version 4.0.0 and later uses Redisearch. To create a custom index in these versions, you must create a new index using [Redisearch Fields](https://oss.redislabs.com/redisearch/Commands.html#field_options). Dragonchain version 4.0.0 supports the use of `text`, `tag`, and `number` fields.
-Your custom indexes may further be customized by specifying options. Options for `text` fields include `weight`, `noStem`, `sortable`, and `noIndex`. Options for `tag` fields include `seperator` and `noIndex`. Options for `number` fields include `sortable` and `noIndex`.
+Custom Indexing in version 4.0.0 and later uses Redisearch. To create a custom index in these versions, you must create a new index using [Redisearch Fields](https://oss.redislabs.com/redisearch/Commands.html#field_options).
+Dragonchain version 4.0.0 supports the use of `text`, `tag`, and `number` fields.
+Your custom indexes may further be customized by specifying options.
+Options for `text` fields include `weight`, `noStem`, `sortable`, and `noIndex`. Options for `tag` fields include `seperator` and `noIndex`. Options for `number` fields include `sortable` and `noIndex`.
 Just like with the previous indexing solution, each field must have a `path` and a `fieldName` (previously `key`) to uniquely identify it within a payload.
 
-Querying on version 4.0.0 and later uses a different query syntax. Redisearch query syntax can be found [here](https://oss.redislabs.com/redisearch/Query_Syntax.html).
+Querying on version 4.0.0 and later uses a different query syntax.
+Redisearch query syntax can be found [here](https://oss.redislabs.com/redisearch/Query_Syntax.html).
 
-Dragonchains of version 4.0.0 or later will not support updating of custom indexes. Instead, an index must be deleted and then re-created to change its indexes. When an index is deleted, all indexed items will be permanently removed. Be cautious when deleting indexes as they cannot be recovered. Custom indexes for smart contracts and transaction types must be declared when they are created.
+Dragonchains of version 4.0.0 or later will not support updating of custom indexes.
+Instead, an index must be deleted and then re-created to change its indexes.
+When an index is deleted, all indexed items will be permanently removed.
+Be cautious when deleting indexes as they cannot be recovered.
+Custom indexes for smart contracts and transaction types must be declared when they are created.
 
 #### Method changes
 
-`queryTransactions` method signature has changed from (luceneQuery, sort, offset, limit) to (transactionType, redisearchQuery, verbatim, offset, limit, sortBy, sortAscending, idsOnly). [verbatim](https://oss.redislabs.com/redisearch/Commands.html#ftsearch) means that the query will not use stems and `idsOnly` improves performance by returning only the transaction ids that match the query, rather than the full object. Though the input parameters have changed, the return schema of query methods has not changed.
+`queryTransactions` method signature has changed from (luceneQuery, sort, offset, limit) to (transactionType, redisearchQuery, verbatim, offset, limit, sortBy, sortAscending, idsOnly). [verbatim](https://oss.redislabs.com/redisearch/Commands.html#ftsearch) means that the query will not use stems and `idsOnly` improves performance by returning only the transaction ids that match the query, rather than the full object.
+Though the input parameters have changed, the return schema of query methods has not changed.
 
-`queryBlocks` method signature has changed from (luceneQuery, sort, offset, limit) to (redisearchQuery, offset, limit, sortBy, sortAscending, idsOnly). It has the same behavior as queryTransactions.
+`queryBlocks` method signature has changed from (luceneQuery, sort, offset, limit) to (redisearchQuery, offset, limit, sortBy, sortAscending, idsOnly).
+It has the same behavior as queryTransactions.
 
-`customIndexFields` has been added to `createSmartContract`. This allows you to create custom indexes on the transaction type created by a smart contract in one step, which is required for custom indexes. The type is the same as the `custom indexes` object.
+`customIndexFields` has been added to `createSmartContract`.
+This allows you to create custom indexes on the transaction type created by a smart contract in one step, which is required for custom indexes. The type is the same as the `custom indexes` object.
 
 `customIndexFields` has replaced `customIndex` in `createTransactionType`.
 
-`querySmartContracts` has been removed. `listSmartContracts` has been provided as an alternative and returns a list of all smart contracts on the chain.
+`querySmartContracts` has been removed.
+`listSmartContracts` has been provided as an alternative and returns a list of all smart contracts on the chain.
 
 `updateTransactionType` has been removed.
 
