@@ -22,11 +22,15 @@ The following are worth noting when transitioning from 3.X.X to 4.X.X:
 - Smart contract querying has been removed, and instead replaced with a generic
   `list_smart_contracts` which simply returns all contracts.
 
+Check [the docs](https://node-sdk-docs.dragonchain.com/latest/) for more details on migrating from v3 to v4.
+
 - **Feature:**
   - Support new query endpoints/parameters for redisearch replacement on dragonchain
   - Support adding custom indexes for smart contracts on creation
   - Support optionally fetching ids only (not entire documents) for querying
   - Support list smart contracts
+- **Documentation:**
+  - Added docs for migrating from v3 to v4
 
 ## 3.2.0
 
