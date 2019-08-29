@@ -59,7 +59,7 @@ if (call.ok) {
 ### QueryTransactions
 
 ```javascript
-const searchResult = await client.queryTransactions({ luceneQuery: 'tag=MyAwesomeTransactionTag' });
+const searchResult = await client.queryTransactions({ transactionType: 'example', redisearchQuery: 'somethingInTxnTag' });
 
 if (call.ok) {
   console.log('Successful call!');
