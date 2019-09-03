@@ -954,7 +954,7 @@ export class DragonchainClient {
     rpcAddress?: string;
     /**
      * The ethereum chain id to use. Will automatically derive this if providing a custom rpcAddress. This should be an integer.
-     * Without providing a custom rpcAddress, Dragonchain manages and supports: 1=ETH Mainnet|3=ETH Ropsten|61=ETC Mainnet|2=ETC Morden
+     * Without providing a custom rpcAddress, Dragonchain manages and supports: 1=ETH Mainnet|3=ETH Ropsten|61=ETC Mainnet|62=ETC Morden
      */
     chainId?: number;
   }) => {
