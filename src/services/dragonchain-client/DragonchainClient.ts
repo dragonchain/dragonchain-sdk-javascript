@@ -607,6 +607,10 @@ export class DragonchainClient {
      * @example ZXhhbXBsZVVzZXI6ZXhhbXBsZVBhc3N3b3JkCg==
      */
     registryCredentials?: string;
+    /**
+     * Set true to remove the existing scheduleIntervalInSeconds or cronExpression from the contract
+     */
+    disableSchedule?: boolean;
   }) => {
     if (!options.smartContractId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required');
     if (options.scheduleIntervalInSeconds && options.cronExpression)
@@ -625,6 +629,7 @@ export class DragonchainClient {
     if (options.scheduleIntervalInSeconds) body.seconds = options.scheduleIntervalInSeconds;
     if (options.cronExpression) body.cron = options.cronExpression;
     if (options.registryCredentials) body.auth = options.registryCredentials;
+    if (options.disableSchedule) body.disable_schedule = true;
     return (await this.put(`/v1/contract/${options.smartContractId}`, body)) as Response<SmartContractAtRest>;
   };
 
