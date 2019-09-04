@@ -29,6 +29,7 @@ Check [the docs](https://node-sdk-docs.dragonchain.com/latest/) for more details
   - Support adding custom indexes for smart contracts on creation
   - Support optionally fetching ids only (not entire documents) for querying
   - Support list smart contracts
+  - Support disable schedule for `updateSmartContract`
 - **Documentation:**
   - Added docs for migrating from v3 to v4
 - **CICD:**
