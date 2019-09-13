@@ -34,6 +34,8 @@ Check [the docs](https://node-sdk-docs.dragonchain.com/latest/) for more details
   - Added docs for migrating from v3 to v4
 - **CICD:**
   - Add NodeJS 12 to PR checks
+- **Packaging:**
+  - Remove some unnecessary files from the packaged release
 
 ## 3.2.0
 
