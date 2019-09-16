@@ -16,6 +16,7 @@
 
 import { promisify } from 'util';
 import { readFile } from 'fs';
+import * as microtime from 'microtime';
 import * as path from 'path';
 import fetch from 'node-fetch';
 import {
@@ -1321,7 +1322,7 @@ export class DragonchainClient {
    * @hidden
    */
   private getFetchOptions(path: string, method: SupportedHTTP, callbackURL = '', body = '', contentType = ''): FetchOptions {
-    const timestamp = new Date().toISOString();
+    const timestamp = `${new Date().toISOString().split('.')[0]}.${microtime.nowStruct()[1].toString().padStart(6, '0')}Z`;
     const options: FetchOptions = {
       method: method,
       body: body || undefined,

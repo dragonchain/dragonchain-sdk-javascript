@@ -139,6 +139,11 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.3.tgz#bdfd69d61e464dcc81b25159c270d75a73c1a636"
   integrity sha512-Il2DtDVRGDcqjDtE+rF8iqg1CArehSK84HZJCT7AMITlyXRBpuPhqGLDQMowraqqu1coEaimg4ZOqggt6L6L+A==
 
+"@types/microtime@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@types/microtime/-/microtime-2.1.0.tgz#adbd99f501a85c88695eb1efd3515810f2563932"
+  integrity sha1-rb2Z9QGoXIhpXrHv01FYEPJWOTI=
+
 "@types/minimatch@3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
@@ -1320,6 +1325,14 @@ merge-source-map@^1.1.0:
   dependencies:
     source-map "^0.6.1"
 
+microtime@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/microtime/-/microtime-3.0.0.tgz#d140914bde88aa89b4f9fd2a18620b435af0f39b"
+  integrity sha512-SirJr7ZL4ow2iWcb54bekS4aWyBQNVcEDBiwAz9D/sTgY59A+uE8UJU15cp5wyZmPBwg/3zf8lyCJ5NUe1nVlQ==
+  dependencies:
+    node-addon-api "^1.2.0"
+    node-gyp-build "^3.8.0"
+
 mimic-fn@^1.0.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-1.2.0.tgz#820c86a39334640e99516928bd03fca88057d022"
@@ -1429,6 +1442,11 @@ nise@^1.5.1:
     lolex "^4.1.0"
     path-to-regexp "^1.7.0"
 
+node-addon-api@^1.2.0:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-1.7.1.tgz#cf813cd69bb8d9100f6bdca6755fc268f54ac492"
+  integrity sha512-2+DuKodWvwRTrCfKOeR24KIc5unKjOh8mz17NCzVnHWfjAdDqbfbjqh7gUT+BkXBRQM52+xCHciKWonJ3CbJMQ==
+
 node-environment-flags@1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/node-environment-flags/-/node-environment-flags-1.0.5.tgz#fa930275f5bf5dae188d6192b24b4c8bbac3d76a"
@@ -1441,6 +1459,11 @@ node-fetch@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
+
+node-gyp-build@^3.8.0:
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-3.9.0.tgz#53a350187dd4d5276750da21605d1cb681d09e25"
+  integrity sha512-zLcTg6P4AbcHPq465ZMFNXx7XpKKJh+7kkN699NiQWisR2uWYOWNWqRHAmbnmKiL4e9aLSlmy5U7rEMUXV59+A==
 
 normalize-package-data@^2.3.2:
   version "2.5.0"
