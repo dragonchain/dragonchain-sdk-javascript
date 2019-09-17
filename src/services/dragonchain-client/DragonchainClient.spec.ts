@@ -24,7 +24,7 @@ chai.use(sinonChai);
 const fakeTimeStamp = Date.now();
 stub(Math, 'floor').returns(400);
 useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-const fakeTime = `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.random() * (999 - 100 + 1) + 100)}Z`;
+const fakeTime = `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.random() * (900) + 100)}Z`;
 
 describe('DragonchainClient', () => {
   describe('#constructor', () => {
