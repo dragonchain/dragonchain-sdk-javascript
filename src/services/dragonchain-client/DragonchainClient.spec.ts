@@ -17,16 +17,14 @@
 import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 import { stub, assert, useFakeTimers } from 'sinon';
-import * as microtime from 'microtime';
 import { DragonchainClient } from './DragonchainClient';
 import { CredentialService } from '../credential-service/CredentialService';
 const expect = chai.expect;
 chai.use(sinonChai);
 const fakeTimeStamp = Date.now();
-const fakeMilliseconds = microtime.nowStruct()[1];
-stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
+stub(Math, 'floor').returns(400);
 useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-const fakeTime = `${new Date().toISOString().split('.')[0]}.${fakeMilliseconds.toString().padStart(6, '0')}Z`;
+const fakeTime = `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.random() * (999 - 100 + 1) + 100)}Z`;
 
 describe('DragonchainClient', () => {
   describe('#constructor', () => {
