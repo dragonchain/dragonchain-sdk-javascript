@@ -1321,7 +1321,7 @@ export class DragonchainClient {
    * @hidden
    */
   private getFetchOptions(path: string, method: SupportedHTTP, callbackURL = '', body = '', contentType = ''): FetchOptions {
-    const timestamp = `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.random() * (999 - 100 + 1) + 100)}Z`;
+    const timestamp = `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.floor(Math.random() * (900) + 100))}Z`;
     const options: FetchOptions = {
       method: method,
       body: body || undefined,
