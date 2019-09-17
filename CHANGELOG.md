@@ -36,6 +36,8 @@ Check [the docs](https://node-sdk-docs.dragonchain.com/latest/) for more details
   - Add NodeJS 12 to PR checks
 - **Packaging:**
   - Remove some unnecessary files from the packaged release
+- **Bug Fix**
+  - Increase precision on timestamp sent to Dragonchain to prevent replay attack error for subsequent requests
 
 ## 3.2.0
 
