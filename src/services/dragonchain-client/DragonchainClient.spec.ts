@@ -21,10 +21,10 @@ import { DragonchainClient } from './DragonchainClient';
 import { CredentialService } from '../credential-service/CredentialService';
 const expect = chai.expect;
 chai.use(sinonChai);
-const fakeTimeStamp = Date.now();
-stub(Math, 'floor').returns(400);
-useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
 const fakeTime = `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.random() * 900) + 100}Z`;
+const fakeTimeStamp = Date.now();
+useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
+stub(DragonchainClient.prototype, 'getTimestamp').returns(fakeTime);
 
 describe('DragonchainClient', () => {
   describe('#constructor', () => {
