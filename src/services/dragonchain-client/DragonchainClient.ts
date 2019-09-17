@@ -1245,6 +1245,13 @@ export class DragonchainClient {
   /**
    * @hidden
    */
+  public getTimestamp() {
+    return `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.random() * 900) + 100}Z`;
+  }
+
+  /**
+   * @hidden
+   */
   private async get(path: string, jsonParse = true) {
     return this.makeRequest(path, 'GET', undefined, undefined, jsonParse);
   }
@@ -1321,7 +1328,7 @@ export class DragonchainClient {
    * @hidden
    */
   private getFetchOptions(path: string, method: SupportedHTTP, callbackURL = '', body = '', contentType = ''): FetchOptions {
-    const timestamp = new Date().toISOString();
+    const timestamp = this.getTimestamp();
     const options: FetchOptions = {
       method: method,
       body: body || undefined,
