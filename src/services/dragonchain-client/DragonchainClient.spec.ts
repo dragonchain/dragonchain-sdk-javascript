@@ -17,12 +17,16 @@
 import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 import { stub, assert, useFakeTimers } from 'sinon';
+import * as microtime from 'microtime';
 import { DragonchainClient } from './DragonchainClient';
 import { CredentialService } from '../credential-service/CredentialService';
 const expect = chai.expect;
 chai.use(sinonChai);
-let fakeTimeStamp;
-let fakeTime: string;
+const fakeTimeStamp = Date.now();
+const fakeMilliseconds = microtime.nowStruct()[1];
+stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
+useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
+const fakeTime = `${new Date().toISOString().split('.')[0]}.${fakeMilliseconds.toString().padStart(6, '0')}Z`;
 
 describe('DragonchainClient', () => {
   describe('#constructor', () => {
@@ -54,9 +58,6 @@ describe('DragonchainClient', () => {
       const injected = { logger, fetch, readFileAsync };
 
       client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-      fakeTimeStamp = Date.now();
-      useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-      fakeTime = new Date(fakeTimeStamp).toISOString();
       expectedFetchOptions = {
         method: 'GET',
         body: undefined,
@@ -68,6 +69,10 @@ describe('DragonchainClient', () => {
         }
       };
     });
+
+    // afterEach(() => {
+    //   testbed.restore();
+    // });
 
     describe('.getSmartContractSecret', () => {
       it('calls readFileAsync with correct dragonchain id and secret name', async () => {
@@ -217,6 +222,9 @@ describe('DragonchainClient', () => {
   });
 
   describe('DELETE', () => {
+    // afterEach(() => {
+    //   testbed.restore();
+    // });
     const fakeResponseObj = { body: 'fakeResponseBody' };
     const fakeResponseText = 'fakeString';
     const fetch = stub().resolves({ status: 200, json: stub().resolves(fakeResponseObj), text: stub().resolves(fakeResponseText) });
@@ -224,9 +232,11 @@ describe('DragonchainClient', () => {
     const logger = { log: stub(), debug: stub() };
     const injected = { logger, fetch };
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
+    // fakeMilliseconds = microtime.nowStruct()[1];
+    // testbed.stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
+    // fakeTimeStamp = Date.now();
+    // useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
+    // fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'DELETE',
       credentials: 'omit',
@@ -262,6 +272,9 @@ describe('DragonchainClient', () => {
   });
 
   describe('POST', () => {
+    // afterEach(() => {
+    //   testbed.restore();
+    // });
     const fakeResponseObj = { body: 'fakeResponseBody' };
     const fakeResponseText = 'fakeString';
     const fetch = stub().resolves({ status: 200, json: stub().resolves(fakeResponseObj), text: stub().resolves(fakeResponseText) });
@@ -270,9 +283,12 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
+    // fakeMilliseconds = microtime.nowStruct()[1];
+    // testbed.stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
+    // fakeTimeStamp = Date.now();
+
+    // useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
+    // fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'POST',
       credentials: 'omit',
@@ -467,6 +483,9 @@ describe('DragonchainClient', () => {
   });
 
   describe('PUT', () => {
+    // afterEach(() => {
+    //   testbed.restore();
+    // });
     const fakeResponseObj = { body: 'fakeResponseBody' };
     const fakeResponseText = 'fakeString';
     const fetch = stub().resolves({ status: 200, json: stub().resolves(fakeResponseObj), text: stub().resolves(fakeResponseText) });
@@ -475,9 +494,11 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
+    // fakeMilliseconds = microtime.nowStruct()[1];
+    // testbed.stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
+    // fakeTimeStamp = Date.now();
+    // useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
+    // fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'PUT',
       credentials: 'omit',
@@ -505,6 +526,9 @@ describe('DragonchainClient', () => {
   });
 
   describe('PATCH', () => {
+    // afterEach(() => {
+    //   testbed.restore();
+    // });
     const fakeResponseObj = { body: 'fakeResponseBody' };
     const fakeResponseText = 'fakeString';
     const fetch = stub().resolves({ status: 200, json: stub().resolves(fakeResponseObj), text: stub().resolves(fakeResponseText) });
@@ -513,9 +537,11 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
+    // fakeMilliseconds = microtime.nowStruct()[1];
+    // stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
+    // fakeTimeStamp = Date.now();
+    // useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
+    // fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'PATCH',
       credentials: 'omit',

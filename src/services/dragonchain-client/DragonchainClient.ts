@@ -1322,7 +1322,10 @@ export class DragonchainClient {
    * @hidden
    */
   private getFetchOptions(path: string, method: SupportedHTTP, callbackURL = '', body = '', contentType = ''): FetchOptions {
-    const timestamp = `${new Date().toISOString().split('.')[0]}.${microtime.nowStruct()[1].toString().padStart(6, '0')}Z`;
+    const timestamp = `${new Date().toISOString().split('.')[0]}.${microtime
+      .nowStruct()[1]
+      .toString()
+      .padStart(6, '0')}Z`;
     const options: FetchOptions = {
       method: method,
       body: body || undefined,
