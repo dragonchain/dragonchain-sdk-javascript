@@ -194,6 +194,13 @@ describe('DragonchainClient', () => {
       });
     });
 
+    describe('.getSmartContractLogs', () => {
+      it('calls #fetch() with correct params', async () => {
+        await client.getSmartContractLogs({ smartContractId: 'test', tail: 100, since: 'a-date' });
+        assert.calledWith(fetch, `fakeUrl/v1/contract/test/logs?tail=100&since=a-date`, expectedFetchOptions);
+      });
+    });
+
     describe('.getInterchainNetwork', () => {
       it('calls #fetch() with correct params', async () => {
         await client.getInterchainNetwork({ blockchain: 'bitcoin', name: 'banana' });
