@@ -70,10 +70,6 @@ describe('DragonchainClient', () => {
       };
     });
 
-    // afterEach(() => {
-    //   testbed.restore();
-    // });
-
     describe('.getSmartContractSecret', () => {
       it('calls readFileAsync with correct dragonchain id and secret name', async () => {
         process.env.SMART_CONTRACT_ID = 'fakeSmartContractId';
@@ -222,9 +218,6 @@ describe('DragonchainClient', () => {
   });
 
   describe('DELETE', () => {
-    // afterEach(() => {
-    //   testbed.restore();
-    // });
     const fakeResponseObj = { body: 'fakeResponseBody' };
     const fakeResponseText = 'fakeString';
     const fetch = stub().resolves({ status: 200, json: stub().resolves(fakeResponseObj), text: stub().resolves(fakeResponseText) });
@@ -232,11 +225,6 @@ describe('DragonchainClient', () => {
     const logger = { log: stub(), debug: stub() };
     const injected = { logger, fetch };
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    // fakeMilliseconds = microtime.nowStruct()[1];
-    // testbed.stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
-    // fakeTimeStamp = Date.now();
-    // useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    // fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'DELETE',
       credentials: 'omit',
@@ -272,9 +260,6 @@ describe('DragonchainClient', () => {
   });
 
   describe('POST', () => {
-    // afterEach(() => {
-    //   testbed.restore();
-    // });
     const fakeResponseObj = { body: 'fakeResponseBody' };
     const fakeResponseText = 'fakeString';
     const fetch = stub().resolves({ status: 200, json: stub().resolves(fakeResponseObj), text: stub().resolves(fakeResponseText) });
@@ -283,12 +268,6 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    // fakeMilliseconds = microtime.nowStruct()[1];
-    // testbed.stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
-    // fakeTimeStamp = Date.now();
-
-    // useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    // fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'POST',
       credentials: 'omit',
@@ -483,9 +462,6 @@ describe('DragonchainClient', () => {
   });
 
   describe('PUT', () => {
-    // afterEach(() => {
-    //   testbed.restore();
-    // });
     const fakeResponseObj = { body: 'fakeResponseBody' };
     const fakeResponseText = 'fakeString';
     const fetch = stub().resolves({ status: 200, json: stub().resolves(fakeResponseObj), text: stub().resolves(fakeResponseText) });
@@ -494,11 +470,6 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    // fakeMilliseconds = microtime.nowStruct()[1];
-    // testbed.stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
-    // fakeTimeStamp = Date.now();
-    // useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    // fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'PUT',
       credentials: 'omit',
@@ -526,9 +497,6 @@ describe('DragonchainClient', () => {
   });
 
   describe('PATCH', () => {
-    // afterEach(() => {
-    //   testbed.restore();
-    // });
     const fakeResponseObj = { body: 'fakeResponseBody' };
     const fakeResponseText = 'fakeString';
     const fetch = stub().resolves({ status: 200, json: stub().resolves(fakeResponseObj), text: stub().resolves(fakeResponseText) });
@@ -537,11 +505,6 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    // fakeMilliseconds = microtime.nowStruct()[1];
-    // stub(microtime, 'nowStruct').returns([0, fakeMilliseconds]);
-    // fakeTimeStamp = Date.now();
-    // useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    // fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'PATCH',
       credentials: 'omit',
