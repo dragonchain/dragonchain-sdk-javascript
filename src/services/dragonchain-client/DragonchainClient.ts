@@ -675,7 +675,7 @@ export class DragonchainClient {
      */
     smartContractId: string;
     /**
-     * Tail, the maximum number of logs to return
+     * Tail, the maximum number of logs to return (unsigned integer)
      */
     tail?: number;
     /**
