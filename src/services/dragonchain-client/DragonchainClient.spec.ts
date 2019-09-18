@@ -21,8 +21,10 @@ import { DragonchainClient } from './DragonchainClient';
 import { CredentialService } from '../credential-service/CredentialService';
 const expect = chai.expect;
 chai.use(sinonChai);
-let fakeTimeStamp;
-let fakeTime: string;
+const fakeTime = `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.random() * 900) + 100}Z`;
+const fakeTimeStamp = Date.now();
+useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
+stub(DragonchainClient.prototype, 'getTimestamp').returns(fakeTime);
 
 describe('DragonchainClient', () => {
   describe('#constructor', () => {
@@ -54,9 +56,6 @@ describe('DragonchainClient', () => {
       const injected = { logger, fetch, readFileAsync };
 
       client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-      fakeTimeStamp = Date.now();
-      useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-      fakeTime = new Date(fakeTimeStamp).toISOString();
       expectedFetchOptions = {
         method: 'GET',
         body: undefined,
@@ -231,9 +230,6 @@ describe('DragonchainClient', () => {
     const logger = { log: stub(), debug: stub() };
     const injected = { logger, fetch };
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'DELETE',
       credentials: 'omit',
@@ -277,9 +273,6 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'POST',
       credentials: 'omit',
@@ -482,9 +475,6 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'PUT',
       credentials: 'omit',
@@ -520,9 +510,6 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'PATCH',
       credentials: 'omit',
