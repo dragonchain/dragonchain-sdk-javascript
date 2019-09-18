@@ -52,7 +52,8 @@ import {
   InterchainNetworkList,
   CustomTextFieldOptions,
   CustomNumberFieldOptions,
-  CustomTagFieldOptions
+  CustomTagFieldOptions,
+  SmartContractLogs
 } from '../../interfaces/DragonchainClientInterfaces';
 import { CredentialService, HmacAlgorithm } from '../credential-service/CredentialService';
 import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
@@ -663,6 +664,30 @@ export class DragonchainClient {
     if (options.smartContractId) return (await this.get(`/v1/contract/${options.smartContractId}`)) as Response<SmartContractAtRest>;
     if (options.transactionType) return (await this.get(`/v1/contract/txn_type/${options.transactionType}`)) as Response<SmartContractAtRest>;
     throw new FailureByDesign('PARAM_ERROR', 'At least one of `smartContractId` or `transactionType` must be supplied');
+  };
+
+  /**
+   * Get a single smart contract by one of id or transaction type
+   */
+  public getSmartContractLogs = async (options: {
+    /**
+     * Contract id to get logs from
+     */
+    smartContractId: string;
+    /**
+     * Tail, the maximum number of logs to return (unsigned integer)
+     */
+    tail?: number;
+    /**
+     * RFC3339 timestamp string. Returns all logs since this datetime string
+     */
+    since?: string;
+  }) => {
+    if (!options.smartContractId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required');
+    const queryParameters: any = {};
+    if (options.tail) queryParameters.tail = options.tail;
+    if (options.since) queryParameters.since = options.since;
+    return (await this.get(`/v1/contract/${options.smartContractId}/logs${this.generateQueryString(queryParameters)}`)) as Response<SmartContractLogs>;
   };
 
   /**
@@ -1322,7 +1347,7 @@ export class DragonchainClient {
   /**
    * @hidden
    */
-  private generateQueryString = (queryObject: Map<string, string>) => `?${UrlSearchParams(queryObject)}`;
+  private generateQueryString = (queryObject: Map<string, string | number>) => `?${UrlSearchParams(queryObject)}`;
 
   /**
    * @hidden

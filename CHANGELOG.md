@@ -30,6 +30,7 @@ Check [the docs](https://node-sdk-docs.dragonchain.com/latest/) for more details
   - Support optionally fetching ids only (not entire documents) for querying
   - Support list smart contracts
   - Support disable schedule for `updateSmartContract`
+  - Support new get logs endpoint
 - **Documentation:**
   - Added docs for migrating from v3 to v4
 - **CICD:**

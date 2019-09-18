@@ -489,6 +489,48 @@ export interface SmartContractAtRest {
 }
 
 /**
+ * Example smart contract logs
+ * @example
+ * ```json
+ *
+ * {
+ *   "logs": [
+ *     {
+ *       "name": "contract-my-contract-id",
+ *       "instance": "contract-my-contract-id-5930345",
+ *       "timestamp": "1568676319",
+ *       "text": "This is my log!"
+ *     },
+ *     ...
+ *   ]
+ * }
+ * ```
+ */
+export interface SmartContractLogs {
+  /**
+   * Array of logs
+   */
+  logs: {
+    /**
+     * The name of the contract deployment
+     */
+    name: string;
+    /**
+     * The pod instance the log came from
+     */
+    instance: string;
+    /**
+     * The timestamp the log occurred at
+     */
+    timestamp: string;
+    /**
+     * The log itself
+     */
+    text: string;
+  }[];
+}
+
+/**
  * Example smart contract list
  * @example
  * ```json
