@@ -492,7 +492,7 @@ export interface SmartContractAtRest {
  * Example smart contract logs
  * @example
  * ```json
- * 
+ *
  * {
  *   "logs": [
  *     {
