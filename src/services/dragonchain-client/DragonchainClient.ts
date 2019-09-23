@@ -23,6 +23,7 @@ import {
   DragonchainTransactionCreateResponse,
   DragonchainBulkTransactionCreateResponse,
   SmartContractAtRest,
+  SmartContractList,
   SupportedHTTP,
   FetchOptions,
   L1DragonchainStatusResult,
@@ -48,7 +49,11 @@ import {
   EthereumInterchainNetwork,
   BitcoinInterchainNetwork,
   SupportedInterchains,
-  InterchainNetworkList
+  InterchainNetworkList,
+  CustomTextFieldOptions,
+  CustomNumberFieldOptions,
+  CustomTagFieldOptions,
+  SmartContractLogs
 } from '../../interfaces/DragonchainClientInterfaces';
 import { CredentialService, HmacAlgorithm } from '../credential-service/CredentialService';
 import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
@@ -264,39 +269,78 @@ export class DragonchainClient {
   };
 
   /**
-   * Query transactions using ElasticSearch query-string syntax
+   * Query transactions using Redisearch query-string syntax
    *
-   * For more information on how to use the ElasticSearch query-string syntax checkout the Elastic Search documentation:
-   * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
+   * For more information on how to use the Redisearch query-string syntax checkout their documentation:
+   * https://oss.redislabs.com/redisearch/Query_Syntax.html
+   *
+   * Note that transactions have the following fields:
+   * timestamp - sortable Numeric field
+   * block_id - sortable Numeric field
+   * tag - Text field
+   *
+   * Transaction types can also have additional custom fields if specified when creating the relevant transaction type/smart contract
+   *
    * @example
    * ```javascript
-   * myClient.queryTransactions({luceneQuery: 'tag:(bananas OR apples)'}).then( ...do stuff )
+   * myClient.queryTransactions({transactionType: 'example', redisearchQuery: 'somethingInTxnTag', sortBy: 'timestamp'}).then( ...do stuff )
    * ```
    */
-  public queryTransactions = async (
-    options: {
-      /**
-       * lucene query to use for this query request
-       * @example `is_serial:true`
-       */
-      luceneQuery?: string;
-      /**
-       * Sort syntax of 'field:direction'
-       * @example `txn_type:asc`
-       */
-      sort?: string;
-      /**
-       * Pagination offset integer of query (default 0)
-       */
-      offset?: number;
-      /**
-       * Pagination limit integer of query (default 10)
-       */
-      limit?: number;
-    } = {}
-  ) => {
-    const queryParams: string = this.getLuceneParams(options.luceneQuery, options.sort, options.offset || 0, options.limit || 10);
-    return (await this.get(`/v1/transaction${queryParams}`)) as Response<QueryResult<L1DragonchainTransactionFull>>;
+  public queryTransactions = async (options: {
+    /**
+     * The single transaction type to query
+     */
+    transactionType: string;
+    /**
+     * Redisearch query syntax string to search with
+     * https://oss.redislabs.com/redisearch/Query_Syntax.html
+     * @example
+     * word1|word2
+     */
+    redisearchQuery: string;
+    /**
+     * Whether or not to use redisearch's VERBATIM
+     * (if true, no stemming occurs on the query)
+     */
+    verbatim?: boolean;
+    /**
+     * Pagination offset of query (default 0)
+     * Must be an integer
+     */
+    offset?: number;
+    /**
+     * Pagination limit (default 10)
+     * Must be an integer
+     */
+    limit?: number;
+    /**
+     * The name of the field to sort by
+     */
+    sortBy?: string;
+    /**
+     * If sortBy is set, this sorts the results by that field in ascending order
+     * (descending if false)
+     */
+    sortAscending?: boolean;
+    /**
+     * If true, rather than an array of transaction objects,
+     * it will return an array of transaction id strings instead
+     */
+    idsOnly?: boolean;
+  }) => {
+    const queryParams: any = {
+      transaction_type: options.transactionType,
+      q: options.redisearchQuery,
+      offset: options.offset || 0,
+      limit: options.limit || 10
+    };
+    if (options.verbatim !== undefined) queryParams.verbatim = options.verbatim;
+    if (options.idsOnly !== undefined) queryParams.id_only = options.idsOnly;
+    if (options.sortBy !== undefined) {
+      queryParams.sort_by = options.sortBy;
+      if (options.sortAscending !== undefined) queryParams.sort_asc = options.sortAscending;
+    }
+    return (await this.get(`/v1/transaction${this.generateQueryString(queryParams)}`)) as Response<QueryResult<L1DragonchainTransactionFull>>;
   };
 
   /**
@@ -313,39 +357,65 @@ export class DragonchainClient {
   };
 
   /**
-   * Query blocks using ElasticSearch query-string syntax
+   * Query transactions using Redisearch query-string syntax
    *
-   * For more information on how to use the ElasticSearch query-string syntax checkout the Elastic Search documentation:
-   * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
+   * For more information on how to use the Redisearch query-string syntax checkout their documentation:
+   * https://oss.redislabs.com/redisearch/Query_Syntax.html
+   *
+   * Note that blocks have the following fields:
+   * block_id - sortable Numeric field
+   * timestamp - sortable Numeric field
+   * prev_id - sortable Numeric field
+   *
    * @example
    * ```javascript
-   * myClient.queryBlocks({sort: 'block_id:asc'}).then( ...do stuff )
+   * myClient.queryBlocks({redisearchQuery: '*', sortBy: 'block_id'}).then( ...do stuff )
    * ```
    */
-  public queryBlocks = async (
-    options: {
-      /**
-       * lucene query to use for this query request
-       * @example `is_serial:true`
-       */
-      luceneQuery?: string;
-      /**
-       * Sort syntax of 'field:direction'
-       * @example `block_id:asc`
-       */
-      sort?: string;
-      /**
-       * Pagination offset integer of query (default 0)
-       */
-      offset?: number;
-      /**
-       * Pagination limit integer of query (default 10)
-       */
-      limit?: number;
-    } = {}
-  ) => {
-    const queryParams: string = this.getLuceneParams(options.luceneQuery, options.sort, options.offset || 0, options.limit || 10);
-    return (await this.get(`/v1/block${queryParams}`)) as Response<QueryResult<BlockSchemaType>>;
+  public queryBlocks = async (options: {
+    /**
+     * Redisearch query syntax string to search with
+     * https://oss.redislabs.com/redisearch/Query_Syntax.html
+     * @example
+     * word1|word2
+     */
+    redisearchQuery: string;
+    /**
+     * Pagination offset of query (default 0)
+     * Must be an integer
+     */
+    offset?: number;
+    /**
+     * Pagination limit (default 10)
+     * Must be an integer
+     */
+    limit?: number;
+    /**
+     * The name of the field to sort by
+     */
+    sortBy?: string;
+    /**
+     * If sortBy is set, this sorts the results by that field in ascending order
+     * (descending if false)
+     */
+    sortAscending?: boolean;
+    /**
+     * If true, rather than an array of block objects,
+     * it will return an array of block id strings instead
+     */
+    idsOnly?: boolean;
+  }) => {
+    const queryParams: any = {
+      q: options.redisearchQuery,
+      offset: options.offset || 0,
+      limit: options.limit || 10
+    };
+    if (options.idsOnly !== undefined) queryParams.id_only = options.idsOnly;
+    if (options.sortBy !== undefined) {
+      queryParams.sort_by = options.sortBy;
+      if (options.sortAscending !== undefined) queryParams.sort_asc = options.sortAscending;
+    }
+    return (await this.get(`/v1/block${this.generateQueryString(queryParams)}`)) as Response<QueryResult<BlockSchemaType>>;
   };
 
   /**
@@ -426,6 +496,10 @@ export class DragonchainClient {
      * @example ZXhhbXBsZVVzZXI6ZXhhbXBsZVBhc3N3b3JkCg==
      */
     registryCredentials?: string;
+    /**
+     * The custom indexes that should be associated with the transaction type for this smart contract
+     */
+    customIndexFields?: TransactionTypeCustomIndex[];
   }) => {
     if (!options.transactionType) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionType` is required');
     if (!options.image) throw new FailureByDesign('PARAM_ERROR', 'Parameter `image` is required');
@@ -446,6 +520,7 @@ export class DragonchainClient {
     if (options.scheduleIntervalInSeconds) body.seconds = options.scheduleIntervalInSeconds;
     if (options.cronExpression) body.cron = options.cronExpression;
     if (options.registryCredentials) body.auth = options.registryCredentials;
+    if (options.customIndexFields) body.custom_indexes = this.validateAndBuildCustomIndexFieldsArray(options.customIndexFields);
     return (await this.post('/v1/contract', body)) as Response<SmartContractAtRest>;
   };
 
@@ -533,6 +608,10 @@ export class DragonchainClient {
      * @example ZXhhbXBsZVVzZXI6ZXhhbXBsZVBhc3N3b3JkCg==
      */
     registryCredentials?: string;
+    /**
+     * Set true to remove the existing scheduleIntervalInSeconds or cronExpression from the contract
+     */
+    disableSchedule?: boolean;
   }) => {
     if (!options.smartContractId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required');
     if (options.scheduleIntervalInSeconds && options.cronExpression)
@@ -551,6 +630,7 @@ export class DragonchainClient {
     if (options.scheduleIntervalInSeconds) body.seconds = options.scheduleIntervalInSeconds;
     if (options.cronExpression) body.cron = options.cronExpression;
     if (options.registryCredentials) body.auth = options.registryCredentials;
+    if (options.disableSchedule) body.disable_schedule = true;
     return (await this.put(`/v1/contract/${options.smartContractId}`, body)) as Response<SmartContractAtRest>;
   };
 
@@ -587,40 +667,33 @@ export class DragonchainClient {
   };
 
   /**
-   * Query smart contracts using ElasticSearch query-string syntax
-   *
-   * For more information on how to use the ElasticSearch query-string syntax checkout the Elastic Search documentation:
-   * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
-   * @example
-   * ```javascript
-   * myClient.querySmartContracts({ luceneQuery: 'tag:(bananas OR apples)' }).then( ...do stuff )
-   * ```
+   * Get a single smart contract by one of id or transaction type
    */
-  public querySmartContracts = async (
-    options: {
-      /**
-       * lucene query to use for this query request
-       * @example `is_serial:true`
-       */
-      luceneQuery?: string;
-      /**
-       * Sort syntax of 'field:direction'
-       * @example `txn_type:asc`
-       */
-      sort?: string;
-      /**
-       * Pagination offset integer of query (default 0)
-       */
-      offset?: number;
-      /**
-       * Pagination limit integer of query (default 10)
-       */
-      limit?: number;
-    } = {}
-  ) => {
-    const queryParams: string = this.getLuceneParams(options.luceneQuery, options.sort, options.offset || 0, options.limit || 10);
-    return (await this.get(`/v1/contract${queryParams}`)) as Response<QueryResult<SmartContractAtRest>>;
+  public getSmartContractLogs = async (options: {
+    /**
+     * Contract id to get logs from
+     */
+    smartContractId: string;
+    /**
+     * Tail, the maximum number of logs to return (unsigned integer)
+     */
+    tail?: number;
+    /**
+     * RFC3339 timestamp string. Returns all logs since this datetime string
+     */
+    since?: string;
+  }) => {
+    if (!options.smartContractId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required');
+    const queryParameters: any = {};
+    if (options.tail) queryParameters.tail = options.tail;
+    if (options.since) queryParameters.since = options.since;
+    return (await this.get(`/v1/contract/${options.smartContractId}/logs${this.generateQueryString(queryParameters)}`)) as Response<SmartContractLogs>;
   };
+
+  /**
+   * Get all smart contracts on a chain
+   */
+  public listSmartContracts = async () => (await this.get('/v1/contract')) as Response<SmartContractList>;
 
   /**
    * Get chain ids for the pending verifications for a block. Note that this is only relevant for level 1 chains.
@@ -724,14 +797,14 @@ export class DragonchainClient {
     /**
      * The custom indexes that should be associated with this transaction type
      */
-    customIndexes?: TransactionTypeCustomIndex[];
+    customIndexFields?: TransactionTypeCustomIndex[];
   }) => {
     if (!options.transactionType) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionType` is required');
     const body: any = {
-      version: '1',
+      version: '2',
       txn_type: options.transactionType
     };
-    if (options.customIndexes) body.custom_indexes = options.customIndexes;
+    if (options.customIndexFields) body.custom_indexes = this.validateAndBuildCustomIndexFieldsArray(options.customIndexFields);
     return (await this.post('/v1/transaction-type', body)) as Response<SimpleResponse>;
   };
 
@@ -753,28 +826,6 @@ export class DragonchainClient {
    */
   public listTransactionTypes = async () => {
     return (await this.get('/v1/transaction-types')) as Response<TransactionTypeListResponse>;
-  };
-
-  /**
-   * Updates an existing transaction type with new custom indexes
-   */
-  public updateTransactionType = async (options: {
-    /**
-     * The name of the transaction type to update
-     */
-    transactionType: string;
-    /**
-     * The custom indexes that should be updated onto the transaction type
-     */
-    customIndexes: TransactionTypeCustomIndex[];
-  }) => {
-    if (!options.transactionType) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionType` is required');
-    if (!options.customIndexes) throw new FailureByDesign('PARAM_ERROR', 'Parameter `customIndexes` is required');
-    const body = {
-      version: '1',
-      custom_indexes: options.customIndexes
-    };
-    return (await this.put(`/v1/transaction-type/${options.transactionType}`, body)) as Response<SimpleResponse>;
   };
 
   /**
@@ -933,7 +984,7 @@ export class DragonchainClient {
     rpcAddress?: string;
     /**
      * The ethereum chain id to use. Will automatically derive this if providing a custom rpcAddress. This should be an integer.
-     * Without providing a custom rpcAddress, Dragonchain manages and supports: 1=ETH Mainnet|3=ETH Ropsten|61=ETC Mainnet|2=ETC Morden
+     * Without providing a custom rpcAddress, Dragonchain manages and supports: 1=ETH Mainnet|3=ETH Ropsten|61=ETC Mainnet|62=ETC Morden
      */
     chainId?: number;
   }) => {
@@ -1219,30 +1270,9 @@ export class DragonchainClient {
   /**
    * @hidden
    */
-  private getLuceneParams = (query?: string, sort?: string, offset = 0, limit = 10) => {
-    const params = new Map();
-    if (query) {
-      params.set('q', query);
-    }
-    if (sort) {
-      params.set('sort', sort);
-    }
-    params.set('offset', String(offset));
-    params.set('limit', String(limit));
-
-    return this.generateQueryString(params);
-  };
-
-  /**
-   * @hidden
-   */
-  private generateQueryString = (queryObject: Map<string, string>) => {
-    const query = '?';
-    const params = UrlSearchParams(queryObject);
-    const queryString = `${query}${params}`;
-
-    return queryString;
-  };
+  public getTimestamp() {
+    return `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.random() * 900) + 100}Z`;
+  }
 
   /**
    * @hidden
@@ -1285,8 +1315,45 @@ export class DragonchainClient {
   /**
    * @hidden
    */
+  private validateAndBuildCustomIndexFieldsArray = (customIndexFields: TransactionTypeCustomIndex[]) => {
+    const returnList: any[] = [];
+    customIndexFields.forEach(customIndexField => {
+      const customTransactionFieldBody: any = {
+        path: customIndexField.path,
+        field_name: customIndexField.fieldName,
+        type: customIndexField.type
+      };
+      if (customIndexField.options) {
+        const optionsBody: any = {};
+        if (customIndexField.options.noIndex !== undefined) optionsBody.no_index = customIndexField.options.noIndex;
+        if (customIndexField.type === 'tag') {
+          if ((customIndexField.options as CustomTagFieldOptions).separator !== undefined) optionsBody.separator = (customIndexField.options as CustomTagFieldOptions).separator;
+        } else if (customIndexField.type === 'text') {
+          if ((customIndexField.options as CustomTextFieldOptions).noStem !== undefined) optionsBody.no_stem = (customIndexField.options as CustomTextFieldOptions).noStem;
+          if ((customIndexField.options as CustomTextFieldOptions).weight !== undefined) optionsBody.weight = (customIndexField.options as CustomTextFieldOptions).weight;
+          if ((customIndexField.options as CustomTextFieldOptions).sortable !== undefined) optionsBody.sortable = (customIndexField.options as CustomTextFieldOptions).sortable;
+        } else if (customIndexField.type === 'number') {
+          if ((customIndexField.options as CustomNumberFieldOptions).sortable !== undefined) optionsBody.sortable = (customIndexField.options as CustomNumberFieldOptions).sortable;
+        } else {
+          throw new FailureByDesign('PARAM_ERROR', 'Parameter `customIndexFields[].type must be `tag`, `text`, or `number`');
+        }
+        customTransactionFieldBody.options = optionsBody;
+      }
+      returnList.push(customTransactionFieldBody);
+    });
+    return returnList;
+  };
+
+  /**
+   * @hidden
+   */
+  private generateQueryString = (queryObject: Map<string, string | number>) => `?${UrlSearchParams(queryObject)}`;
+
+  /**
+   * @hidden
+   */
   private getFetchOptions(path: string, method: SupportedHTTP, callbackURL = '', body = '', contentType = ''): FetchOptions {
-    const timestamp = new Date().toISOString();
+    const timestamp = this.getTimestamp();
     const options: FetchOptions = {
       method: method,
       body: body || undefined,

@@ -348,7 +348,7 @@ export interface GetAPIKeyResponse {
  *      {
  *         "id": "PDJSYJNBTDBP",
  *         "registration_time": 1548604295
- *      }, ...
+ *      }
  *   ]
  * }
  * ```
@@ -486,6 +486,92 @@ export interface SmartContractAtRest {
    * execution order of the contract, whether it gets invoked asap (parallel), or in a single queue (serial)
    */
   execution_order: SmartContractExecutionOrder;
+}
+
+/**
+ * Example smart contract logs
+ * @example
+ * ```json
+ *
+ * {
+ *   "logs": [
+ *     {
+ *       "name": "contract-my-contract-id",
+ *       "instance": "contract-my-contract-id-5930345",
+ *       "timestamp": "1568676319",
+ *       "text": "This is my log!"
+ *     },
+ *     ...
+ *   ]
+ * }
+ * ```
+ */
+export interface SmartContractLogs {
+  /**
+   * Array of logs
+   */
+  logs: {
+    /**
+     * The name of the contract deployment
+     */
+    name: string;
+    /**
+     * The pod instance the log came from
+     */
+    instance: string;
+    /**
+     * The timestamp the log occurred at
+     */
+    timestamp: string;
+    /**
+     * The log itself
+     */
+    text: string;
+  }[];
+}
+
+/**
+ * Example smart contract list
+ * @example
+ * ```json
+ *
+ * {
+ *   "smart_contracts": [{
+ *     "dcrn": "SmartContract::L1::AtRest",
+ *     "version": "1",
+ *     "txn_type": "c1",
+ *     "id": "ec3e6dac-da91-4186-9c21-3f996b4462ab",
+ *     "status": {
+ *       "state": "active",
+ *       "msg": "Creation success",
+ *       "timestamp": "2019-05-21 20:19:10.519848"
+ *     },
+ *     "image": "ubuntu:latest",
+ *     "auth_key_id": "SC_ELDVFTEQWXCW",
+ *     "image_digest": "sha256:9cf55af627c98299a13aac1349936128770bb0ce44b65344779034f52b2a7934",
+ *     "cmd": "cat",
+ *     "args": [
+ *       "-"
+ *     ],
+ *     "env": {
+ *       "STAGE": "dev",
+ *       "DRAGONCHAIN_ID": "ec67bbf5-b41e-4526-95fd-6a7c3abdd058",
+ *       "SMART_CONTRACT_ID": "ec3e6dac-da91-4186-9c21-3f996b4462ab",
+ *       "SMART_CONTRACT_NAME": "c1"
+ *     },
+ *     "existing_secrets": [
+ *       "secret-key",
+ *       "auth-key-id"
+ *     ],
+ *     "cron": null,
+ *     "seconds": null,
+ *     "execution_order": "parallel"
+ *   }]
+ * }
+ * ```
+ */
+export interface SmartContractList {
+  smart_contracts: SmartContractAtRest[];
 }
 
 /**
@@ -873,6 +959,69 @@ export interface SimpleResponse {
   success: boolean;
 }
 
+export interface CustomTextFieldOptions {
+  weight?: number;
+  noStem?: boolean;
+  sortable?: boolean;
+  noIndex?: boolean;
+}
+
+export interface CustomTagFieldOptions {
+  separator?: string;
+  noIndex?: boolean;
+}
+
+export interface CustomNumberFieldOptions {
+  sortable?: boolean;
+  noIndex?: boolean;
+}
+
+export type CustomIndexType = 'text' | 'tag' | 'number';
+
+export interface TransactionTypeCustomIndex {
+  path: string;
+  fieldName: string;
+  type: CustomIndexType;
+  options?: CustomTextFieldOptions | CustomTagFieldOptions | CustomNumberFieldOptions;
+}
+
+/**
+ * @example
+ * ```json
+ *
+ * {
+ *   "version": "2",
+ *   "txn_type": "example",
+ *   "custom_indexes": [
+ *     {
+ *       "path": "someJsonPath",
+ *       "field_name": "aField",
+ *       "type": "text",
+ *       "options": {
+ *         "weight": 0.5,
+ *         "sortable": true
+ *       }
+ *     }
+ *   ],
+ *   "contract_id": "",
+ *   "active_since_block": "26925824"
+ * }
+ * ```
+ */
+export interface TransactionTypeResponse {
+  version: '2';
+  txn_type: string;
+  custom_indexes: TransactionTypeCustomIndex[];
+  /**
+   * If this is not a transaction type for a smart contract, this will be an empty string
+   */
+  contract_id: string;
+  /**
+   * When this transaction type has been active since
+   */
+  active_since_block: string;
+}
+
 /**
  * @example
  * ```json
@@ -880,15 +1029,21 @@ export interface SimpleResponse {
  * {
  *   "transaction_types": [
  *     {
- *       "version": "1",
+ *       "version": "2",
  *       "txn_type": "example",
  *       "custom_indexes": [
  *         {
- *           "key": "someKey",
- *           "path": "someJsonPath"
+ *           "path": "someJsonPath",
+ *           "field_name": "aField",
+ *           "type": "text",
+ *           "options": {
+ *             "weight": 0.5,
+ *             "sortable": true
+ *           }
  *         }
  *       ],
- *       "contract_id": false
+ *       "contract_id": "",
+ *       "active_since_block": "26925824"
  *     }
  *   ]
  * }
@@ -896,37 +1051,4 @@ export interface SimpleResponse {
  */
 export interface TransactionTypeListResponse {
   transaction_types: TransactionTypeResponse[];
-}
-
-export interface TransactionTypeCustomIndex {
-  key: string;
-  path: string;
-}
-
-/**
- * @example
- * ```json
- *
- * {
- *   "version": "1",
- *   "txn_type": "example",
- *   "custom_indexes": [
- *     {
- *       "key": "someKey",
- *       "path": "someJsonPath"
- *     }
- *   ],
- *   "contract_id": false
- * }
- * ```
- */
-export interface TransactionTypeResponse {
-  version: '1';
-  txn_type: string;
-  custom_indexes: TransactionTypeCustomIndex[];
-  /**
-   * If this is a ledger contract type, (not assigned to a contract), then this field will simply be the boolean false,
-   * otherwise this will be the string of the associated contract id
-   */
-  contract_id: string | boolean;
 }

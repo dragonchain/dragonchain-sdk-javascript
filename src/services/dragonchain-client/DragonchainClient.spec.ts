@@ -21,8 +21,10 @@ import { DragonchainClient } from './DragonchainClient';
 import { CredentialService } from '../credential-service/CredentialService';
 const expect = chai.expect;
 chai.use(sinonChai);
-let fakeTimeStamp;
-let fakeTime: string;
+const fakeTime = `${new Date().toISOString().slice(0, -1)}${Math.floor(Math.random() * 900) + 100}Z`;
+const fakeTimeStamp = Date.now();
+useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
+stub(DragonchainClient.prototype, 'getTimestamp').returns(fakeTime);
 
 describe('DragonchainClient', () => {
   describe('#constructor', () => {
@@ -54,9 +56,6 @@ describe('DragonchainClient', () => {
       const injected = { logger, fetch, readFileAsync };
 
       client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-      fakeTimeStamp = Date.now();
-      useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-      fakeTime = new Date(fakeTimeStamp).toISOString();
       expectedFetchOptions = {
         method: 'GET',
         body: undefined,
@@ -145,19 +144,59 @@ describe('DragonchainClient', () => {
       });
     });
 
-    describe('.queryBlocks', () => {
+    describe('.queryTransactions', () => {
       it('calls #fetch() with correct params', async () => {
-        const params = 'banana';
-        await client.queryBlocks({ luceneQuery: params });
-        assert.calledWith(fetch, `fakeUrl/v1/block?q=${params}&offset=0&limit=10`, expectedFetchOptions);
+        await client.queryTransactions({
+          transactionType: 'testing',
+          redisearchQuery: 'banana',
+          verbatim: false,
+          limit: 2,
+          offset: 1,
+          idsOnly: false,
+          sortAscending: false,
+          sortBy: 'whatever'
+        });
+        assert.calledWith(
+          fetch,
+          'fakeUrl/v1/transaction?transaction_type=testing&q=banana&offset=1&limit=2&verbatim=false&id_only=false&sort_by=whatever&sort_asc=false',
+          expectedFetchOptions
+        );
+      });
+
+      it('defaults offset and limit', async () => {
+        await client.queryTransactions({
+          transactionType: 'test',
+          redisearchQuery: 'yeah'
+        });
+        assert.calledWith(fetch, 'fakeUrl/v1/transaction?transaction_type=test&q=yeah&offset=0&limit=10', expectedFetchOptions);
       });
     });
 
-    describe('.querySmartContracts', () => {
+    describe('.queryBlocks', () => {
       it('calls #fetch() with correct params', async () => {
-        const params = 'banana';
-        await client.querySmartContracts({ luceneQuery: params });
-        assert.calledWith(fetch, `fakeUrl/v1/contract?q=${params}&offset=0&limit=10`, expectedFetchOptions);
+        await client.queryBlocks({ redisearchQuery: 'banana', limit: 2, offset: 1, idsOnly: false, sortAscending: false, sortBy: 'something' });
+        assert.calledWith(fetch, `fakeUrl/v1/block?q=banana&offset=1&limit=2&id_only=false&sort_by=something&sort_asc=false`, expectedFetchOptions);
+      });
+
+      it('defaults offset and limit', async () => {
+        await client.queryBlocks({
+          redisearchQuery: 'yeah'
+        });
+        assert.calledWith(fetch, 'fakeUrl/v1/block?q=yeah&offset=0&limit=10', expectedFetchOptions);
+      });
+    });
+
+    describe('.listSmartContracts', () => {
+      it('calls #fetch() with correct params', async () => {
+        await client.listSmartContracts();
+        assert.calledWith(fetch, `fakeUrl/v1/contract`, expectedFetchOptions);
+      });
+    });
+
+    describe('.getSmartContractLogs', () => {
+      it('calls #fetch() with correct params', async () => {
+        await client.getSmartContractLogs({ smartContractId: 'test', tail: 100, since: 'a-date' });
+        assert.calledWith(fetch, `fakeUrl/v1/contract/test/logs?tail=100&since=a-date`, expectedFetchOptions);
       });
     });
 
@@ -191,9 +230,6 @@ describe('DragonchainClient', () => {
     const logger = { log: stub(), debug: stub() };
     const injected = { logger, fetch };
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'DELETE',
       credentials: 'omit',
@@ -237,9 +273,6 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'POST',
       credentials: 'omit',
@@ -275,6 +308,33 @@ describe('DragonchainClient', () => {
         await client.createTransaction(transactionCreatePayload);
         const obj = { ...expectedFetchOptions, body: JSON.stringify(expectedBody) };
         assert.calledWith(fetch, 'fakeUrl/v1/transaction', obj);
+      });
+    });
+
+    describe('.createTransactionType', () => {
+      it('calls #fetch() with correct params', async () => {
+        const expectedBody = {
+          version: '2',
+          txn_type: 'testing',
+          custom_indexes: [
+            {
+              path: 'testPath',
+              field_name: 'someField',
+              type: 'text',
+              options: {
+                no_index: false,
+                weight: 0.5,
+                sortable: true
+              }
+            }
+          ]
+        };
+        await client.createTransactionType({
+          transactionType: 'testing',
+          customIndexFields: [{ path: 'testPath', fieldName: 'someField', type: 'text', options: { noIndex: false, sortable: true, weight: 0.5 } }]
+        });
+        const obj = { ...expectedFetchOptions, body: JSON.stringify(expectedBody) };
+        assert.calledWith(fetch, 'fakeUrl/v1/transaction-type', obj);
       });
     });
 
@@ -415,9 +475,6 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'PUT',
       credentials: 'omit',
@@ -453,9 +510,6 @@ describe('DragonchainClient', () => {
     const injected = { logger, CredentialService, fetch };
 
     const client = new DragonchainClient('fakeUrl', CredentialService, true, injected);
-    fakeTimeStamp = Date.now();
-    useFakeTimers({ now: fakeTimeStamp, shouldAdvanceTime: false });
-    fakeTime = new Date(fakeTimeStamp).toISOString();
     const expectedFetchOptions = {
       method: 'PATCH',
       credentials: 'omit',
