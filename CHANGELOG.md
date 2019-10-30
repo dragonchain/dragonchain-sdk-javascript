@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.1
+
+- **Bug Fix**
+  - Remove erroneous `?` from query string when no query string parameters are provided
+
 ## 4.0.0
 
 Because Dragonchain has a breaking change to replace its indexing solution, this is also a breaking SDK change for queries and custom indexing.
