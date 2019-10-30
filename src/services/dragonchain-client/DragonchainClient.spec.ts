@@ -198,6 +198,11 @@ describe('DragonchainClient', () => {
         await client.getSmartContractLogs({ smartContractId: 'test', tail: 100, since: 'a-date' });
         assert.calledWith(fetch, `fakeUrl/v1/contract/test/logs?tail=100&since=a-date`, expectedFetchOptions);
       });
+
+      it('calls #fetch() with correct params and missing erroneous ?', async () => {
+        await client.getSmartContractLogs({ smartContractId: 'test' });
+        assert.calledWith(fetch, `fakeUrl/v1/contract/test/logs`, expectedFetchOptions);
+      });
     });
 
     describe('.getInterchainNetwork', () => {
