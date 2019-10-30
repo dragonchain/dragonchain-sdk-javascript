@@ -1347,7 +1347,7 @@ export class DragonchainClient {
   /**
    * @hidden
    */
-  private generateQueryString = (queryObject: Map<string, string | number>) => `?${UrlSearchParams(queryObject)}`;
+  private generateQueryString = (queryObject: Map<string, string | number>) => Object.keys(queryObject).length > 0 ? `?${UrlSearchParams(queryObject)}` : '';
 
   /**
    * @hidden
