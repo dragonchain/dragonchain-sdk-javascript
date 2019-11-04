@@ -18,7 +18,7 @@ import { promisify } from 'util';
 import fs from 'fs';
 import * as path from 'path';
 import fetch from 'node-fetch';
-import glob from 'glob';
+import * as glob from 'glob';
 
 import {
   L1DragonchainTransactionFull,
@@ -62,7 +62,7 @@ import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
 import { URLSearchParams as nodeUrlSearchParams } from 'url';
 import { logger } from '../../index';
 import { FailureByDesign } from '../../errors/FailureByDesign';
-const globPromise = promisify(glob).bind(glob);
+const globPromise = promisify(glob)
 /**
  * @hidden
  */
