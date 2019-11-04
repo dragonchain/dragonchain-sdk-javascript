@@ -15,7 +15,7 @@
  */
 
 import { promisify } from 'util';
-import fs from 'fs';
+import * as fs from 'fs';
 import * as path from 'path';
 import fetch from 'node-fetch';
 import * as glob from 'glob';

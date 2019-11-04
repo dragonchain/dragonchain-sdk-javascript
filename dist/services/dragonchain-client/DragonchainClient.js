@@ -18,7 +18,7 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var util_1 = require("util");
-var fs_1 = require("fs");
+var fs = require("fs");
 var path = require("path");
 var node_fetch_1 = require("node-fetch");
 var glob = require("glob");
@@ -40,8 +40,8 @@ var UrlSearchParams = function (queryParams) {
 var readFileAsync = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
     return [2 /*return*/, ''];
 }); }); };
-if (fs_1.default.readFile)
-    readFileAsync = util_1.promisify(fs_1.default.readFile);
+if (fs.readFile)
+    readFileAsync = util_1.promisify(fs.readFile);
 /**
  * HTTP Client that interfaces with the dragonchain api
  */
@@ -51,8 +51,8 @@ var DragonchainClient = /** @class */ (function () {
      * Construct an instance of a DragonchainClient. THIS SHOULD NOT BE CALLED DIRECTLY. Instead use the `createClient` function to instantiate a client
      */
     function DragonchainClient(endpoint, credentials, verify, injected) {
-        var _this = this;
         if (injected === void 0) { injected = {}; }
+        var _this = this;
         /**
          * Reads secrets provided to a smart contract
          *
