@@ -136,7 +136,7 @@ const getCredsFromFile = async (dragonchainId: string, injected: any = { readFil
 const getEndpointFromRemote = async (dragonchainId: string, injected: any = { fetch }): Promise<string> => {
   try {
     const result = await injected.fetch(`https://matchmaking.api.dragonchain.com/registration/${dragonchainId}`, { timeout: 30000 });
-    const json: any = result.json();
+    const json: any = await result.json();
     const endpoint: string = json.url;
     if (!endpoint) throw new Error(`Bad response from remote service ${json}`); // Caught and re-thrown below
     return endpoint;
