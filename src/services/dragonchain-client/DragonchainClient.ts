@@ -62,7 +62,8 @@ import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
 import { URLSearchParams as nodeUrlSearchParams } from 'url';
 import { logger } from '../../index';
 import { FailureByDesign } from '../../errors/FailureByDesign';
-const globPromise = promisify(glob)
+const globPromise = promisify(glob);
+
 /**
  * @hidden
  */
