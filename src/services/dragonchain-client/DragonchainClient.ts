@@ -794,7 +794,7 @@ export class DragonchainClient {
 
     if (process.env.DRAGONCHAIN_ENV === 'test') {
       const pattern = options.prefixKey ? `/dragonchain/smartcontract/heap/${options.prefixKey}/**` : `/dragonchain/smartcontract/heap/**`;
-      return globPromise(pattern);
+      return globPromise(pattern, {nodir: true});
     }
     return (await this.get(path)) as Response<string[]>;
   };
