@@ -15,9 +15,11 @@
  */
 
 import { promisify } from 'util';
-import { readFile } from 'fs';
+import fs from 'fs';
 import * as path from 'path';
 import fetch from 'node-fetch';
+import glob from 'glob';
+
 import {
   L1DragonchainTransactionFull,
   DragonchainTransactionCreateResponse,
@@ -60,7 +62,7 @@ import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
 import { URLSearchParams as nodeUrlSearchParams } from 'url';
 import { logger } from '../../index';
 import { FailureByDesign } from '../../errors/FailureByDesign';
-
+const globPromise = promisify(glob).bind(glob);
 /**
  * @hidden
  */
@@ -73,7 +75,7 @@ const UrlSearchParams: any = (queryParams: any) => {
 };
 
 let readFileAsync: any = async () => '';
-if (readFile) readFileAsync = promisify(readFile);
+if (fs.readFile) readFileAsync = promisify(fs.readFile);
 
 /**
  * HTTP Client that interfaces with the dragonchain api
@@ -737,17 +739,23 @@ export class DragonchainClient {
      */
     key: string;
     /**
-     * Smart contract to get the object from
+     * Id of the smart contract from which to get the object
      *
      * When running from within a smart contract, this is provided via the SMART_CONTRACT_ID environment variable, and doesn't need to be explicitly provided
      */
     smartContractId?: string;
   }) => {
     if (!options.key) throw new FailureByDesign('PARAM_ERROR', 'Parameter `key` is required');
+
+    if (process.env.DRAGONCHAIN_ENV === 'test') {
+      return readFileAsync(`/dragonchain/smartcontract/heap/${options.key}`, 'utf-8');
+    }
+
     if (!options.smartContractId) {
       if (!process.env.SMART_CONTRACT_ID) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required when not running within a smart contract');
       options.smartContractId = process.env.SMART_CONTRACT_ID;
     }
+
     const response = (await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false)) as unknown;
     return response as string;
   };
@@ -781,6 +789,11 @@ export class DragonchainClient {
     if (options.prefixKey) {
       if (options.prefixKey.endsWith('/')) throw new FailureByDesign('PARAM_ERROR', "Parameter `prefixKey` cannot end with '/'");
       path += `${options.prefixKey}/`;
+    }
+
+    if (process.env.DRAGONCHAIN_ENV === 'test') {
+      const pattern = options.prefixKey ? `/dragonchain/smartcontract/heap/${options.prefixKey}/**` : `/dragonchain/smartcontract/heap/**`;
+      return globPromise(pattern);
     }
     return (await this.get(path)) as Response<string[]>;
   };
