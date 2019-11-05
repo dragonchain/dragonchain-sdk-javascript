@@ -769,7 +769,7 @@ export class DragonchainClient {
       options.smartContractId = process.env.SMART_CONTRACT_ID;
     }
 
-    const response = (await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false)) as unknown;
+    const response = await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false);
     return response as Response<string>;
   };
 
