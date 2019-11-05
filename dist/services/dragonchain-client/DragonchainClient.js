@@ -505,31 +505,33 @@ var DragonchainClient = /** @class */ (function () {
          * Get an object from the smart contract heap. This is used for getting stateful data set by the outputs of smart contracts
          */
         this.getSmartContractObject = function (options) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var response;
+            var e_1, response;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!options.key)
                             throw new FailureByDesign_1.FailureByDesign('PARAM_ERROR', 'Parameter `key` is required');
-                        if (process.env.DRAGONCHAIN_ENV === 'test') {
-                            try {
-                                return [2 /*return*/, readFileAsync("/dragonchain/smartcontract/heap/" + options.key, 'utf-8')];
-                            }
-                            catch (e) {
-                                // When not found, S3 returns null.
-                                if (e.code === 'ENOENT') {
-                                    return [2 /*return*/, null];
-                                }
-                                throw e; // re-raise if unexpected error.
-                            }
+                        if (!(process.env.DRAGONCHAIN_ENV === 'test')) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, readFileAsync("/dragonchain/smartcontract/heap/" + options.key, 'utf-8')];
+                    case 2: return [2 /*return*/, _a.sent()];
+                    case 3:
+                        e_1 = _a.sent();
+                        // When not found, S3 returns null.
+                        if (e_1.code === 'ENOENT') {
+                            return [2 /*return*/, null];
                         }
+                        throw e_1; // re-raise if unexpected error.
+                    case 4:
                         if (!options.smartContractId) {
                             if (!process.env.SMART_CONTRACT_ID)
                                 throw new FailureByDesign_1.FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required when not running within a smart contract');
                             options.smartContractId = process.env.SMART_CONTRACT_ID;
                         }
                         return [4 /*yield*/, this.get("/v1/get/" + options.smartContractId + "/" + options.key, false)];
-                    case 1:
+                    case 5:
                         response = (_a.sent());
                         return [2 /*return*/, response];
                 }

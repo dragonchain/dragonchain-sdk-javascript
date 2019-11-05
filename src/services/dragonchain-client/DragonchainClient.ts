@@ -750,7 +750,7 @@ export class DragonchainClient {
 
     if (process.env.DRAGONCHAIN_ENV === 'test') {
       try {
-        return readFileAsync(`/dragonchain/smartcontract/heap/${options.key}`, 'utf-8');
+        return await readFileAsync(`/dragonchain/smartcontract/heap/${options.key}`, 'utf-8');
       } catch (e) {
         // When not found, S3 returns null.
         if (e.code === 'ENOENT') {
