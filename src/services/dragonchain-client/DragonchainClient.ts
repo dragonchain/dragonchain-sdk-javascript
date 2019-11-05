@@ -749,7 +749,15 @@ export class DragonchainClient {
     if (!options.key) throw new FailureByDesign('PARAM_ERROR', 'Parameter `key` is required');
 
     if (process.env.DRAGONCHAIN_ENV === 'test') {
-      return readFileAsync(`/dragonchain/smartcontract/heap/${options.key}`, 'utf-8');
+      try {
+        return readFileAsync(`/dragonchain/smartcontract/heap/${options.key}`, 'utf-8');
+      } catch (e) {
+        // When not found, S3 returns null.
+        if (e.code === 'ENOENT') {
+          return null;
+        }
+        throw e; // re-raise if unexpected error.
+      }
     }
 
     if (!options.smartContractId) {
@@ -794,7 +802,7 @@ export class DragonchainClient {
 
     if (process.env.DRAGONCHAIN_ENV === 'test') {
       const pattern = options.prefixKey ? `/dragonchain/smartcontract/heap/${options.prefixKey}/**` : `/dragonchain/smartcontract/heap/**`;
-      return globPromise(pattern, {nodir: true});
+      return globPromise(pattern, { nodir: true });
     }
     return (await this.get(path)) as Response<string[]>;
   };

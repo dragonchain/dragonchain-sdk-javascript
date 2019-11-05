@@ -512,7 +512,16 @@ var DragonchainClient = /** @class */ (function () {
                         if (!options.key)
                             throw new FailureByDesign_1.FailureByDesign('PARAM_ERROR', 'Parameter `key` is required');
                         if (process.env.DRAGONCHAIN_ENV === 'test') {
-                            return [2 /*return*/, readFileAsync("/dragonchain/smartcontract/heap/" + options.key, 'utf-8')];
+                            try {
+                                return [2 /*return*/, readFileAsync("/dragonchain/smartcontract/heap/" + options.key, 'utf-8')];
+                            }
+                            catch (e) {
+                                // When not found, S3 returns null.
+                                if (e.code === 'ENOENT') {
+                                    return [2 /*return*/, null];
+                                }
+                                throw e; // re-raise if unexpected error.
+                            }
                         }
                         if (!options.smartContractId) {
                             if (!process.env.SMART_CONTRACT_ID)
