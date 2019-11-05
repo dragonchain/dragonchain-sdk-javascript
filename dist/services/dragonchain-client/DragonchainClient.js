@@ -505,23 +505,28 @@ var DragonchainClient = /** @class */ (function () {
          * Get an object from the smart contract heap. This is used for getting stateful data set by the outputs of smart contracts
          */
         this.getSmartContractObject = function (options) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var e_1, response;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
+            var _a, e_1, response;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         if (!options.key)
                             throw new FailureByDesign_1.FailureByDesign('PARAM_ERROR', 'Parameter `key` is required');
                         if (!(process.env.DRAGONCHAIN_ENV === 'test')) return [3 /*break*/, 4];
-                        _a.label = 1;
+                        _b.label = 1;
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
+                        _b.trys.push([1, 3, , 4]);
+                        _a = {
+                            status: 200
+                        };
                         return [4 /*yield*/, readFileAsync("/dragonchain/smartcontract/heap/" + options.key, 'utf-8')];
-                    case 2: return [2 /*return*/, _a.sent()];
+                    case 2: return [2 /*return*/, (_a.response = _b.sent(),
+                            _a.ok = true,
+                            _a)];
                     case 3:
-                        e_1 = _a.sent();
+                        e_1 = _b.sent();
                         // When not found, S3 returns null.
                         if (e_1.code === 'ENOENT') {
-                            return [2 /*return*/, null];
+                            return [2 /*return*/, { status: 404, response: null, ok: false }];
                         }
                         throw e_1; // re-raise if unexpected error.
                     case 4:
@@ -532,7 +537,7 @@ var DragonchainClient = /** @class */ (function () {
                         }
                         return [4 /*yield*/, this.get("/v1/get/" + options.smartContractId + "/" + options.key, false)];
                     case 5:
-                        response = (_a.sent());
+                        response = (_b.sent());
                         return [2 /*return*/, response];
                 }
             });
