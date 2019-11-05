@@ -26,7 +26,7 @@ package-lock.json
 .node_repl_history
 
 # Built TS
-#dist/
+dist/
 docs/
 
 # ide
