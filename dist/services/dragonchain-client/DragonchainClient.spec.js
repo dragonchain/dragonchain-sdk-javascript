@@ -197,6 +197,44 @@ describe('DragonchainClient', function () {
                 });
             }); });
         });
+        describe('.getSmartContractObject', function () {
+            it('calls #fetch() with correct params', function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                var key;
+                return tslib_1.__generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            key = 'myKey';
+                            return [4 /*yield*/, client.getSmartContractObject({ key: key })];
+                        case 1:
+                            _a.sent();
+                            sinon_1.assert.calledWith(fetch, "fakeUrl/v1/get/fakeSmartContractId/" + key, expectedFetchOptions);
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            describe('.getSmartContractObject', function () {
+                before(function () {
+                    process.env.DRAGONCHAIN_ENV = 'test';
+                });
+                after(function () {
+                    process.env.DRAGONCHAIN_ENV = undefined;
+                });
+                it('calls #fetch() with correct params', function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                    var key, x;
+                    return tslib_1.__generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                key = 'myKey';
+                                return [4 /*yield*/, client.getSmartContractObject({ key: key })];
+                            case 1:
+                                x = _a.sent();
+                                expect(x).to.deep.equal({ status: 404, response: 'null', ok: false });
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
+            });
+        });
         describe('.getVerifications', function () {
             it('calls #fetch() with correct params', function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                 var id;

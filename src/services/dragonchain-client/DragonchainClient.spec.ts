@@ -136,6 +136,30 @@ describe('DragonchainClient', () => {
       });
     });
 
+    describe('.getSmartContractObject', () => {
+      it('calls #fetch() with correct params', async () => {
+        const key = 'myKey';
+        await client.getSmartContractObject({ key });
+        assert.calledWith(fetch, `fakeUrl/v1/get/fakeSmartContractId/${key}`, expectedFetchOptions);
+      });
+
+      describe('.getSmartContractObject', () => {
+        before(() => {
+          process.env.DRAGONCHAIN_ENV = 'test';
+        });
+
+        after(() => {
+          process.env.DRAGONCHAIN_ENV = undefined;
+        });
+
+        it('fails to read from the file system correctly', async () => {
+          const key = 'myKey';
+          const x = await client.getSmartContractObject({ key });
+          expect(x).to.deep.equal({ status: 404, response: 'null', ok: false });
+        });
+      });
+    });
+
     describe('.getVerifications', () => {
       it('calls #fetch() with correct params', async () => {
         const id = 'block_id';
