@@ -514,7 +514,7 @@ export declare class DragonchainClient {
          * When running from within a smart contract, this is provided via the SMART_CONTRACT_ID environment variable, and doesn't need to be explicitly provided
          */
         smartContractId?: string | undefined;
-    }) => Promise<string | {
+    }) => Promise<{
         status: number;
         response: any;
         ok: boolean;

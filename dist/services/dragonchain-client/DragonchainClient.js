@@ -526,7 +526,7 @@ var DragonchainClient = /** @class */ (function () {
                         e_1 = _b.sent();
                         // When not found, S3 returns null.
                         if (e_1.code === 'ENOENT') {
-                            return [2 /*return*/, { status: 404, response: null, ok: false }];
+                            return [2 /*return*/, { status: 404, response: 'null', ok: false }];
                         }
                         throw e_1; // re-raise if unexpected error.
                     case 4:

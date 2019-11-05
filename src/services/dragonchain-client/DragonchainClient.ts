@@ -754,11 +754,11 @@ export class DragonchainClient {
           status: 200,
           response: await readFileAsync(`/dragonchain/smartcontract/heap/${options.key}`, 'utf-8'),
           ok: true
-        }
+        };
       } catch (e) {
         // When not found, S3 returns null.
         if (e.code === 'ENOENT') {
-          return { status: 404, response: null, ok: false }
+          return { status: 404, response: 'null', ok: false };
         }
         throw e; // re-raise if unexpected error.
       }
@@ -770,7 +770,7 @@ export class DragonchainClient {
     }
 
     const response = (await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false)) as unknown;
-    return response as string;
+    return response as Response<string>;
   };
 
   /**

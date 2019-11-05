@@ -30,7 +30,7 @@
     "clean": "rm -rf ./docs/ ./dist/ ./coverage/ ./.nyc_output/",
     "test": "NODE_ENV=test nyc --reporter=lcov --reporter=text mocha -r ts-node/register 'src/**/*.spec.ts' --exit",
     "test:built": "NODE_ENV=test mocha 'dist/**/*.spec.js' --exit",
-    "test:ci": "yarn lint && yarn build && yarn docs && yarn test"
+    "test:ci": "yarn clean && yarn lint && yarn build && yarn docs && yarn test"
   },
   "nyc": {
     "extension": [
