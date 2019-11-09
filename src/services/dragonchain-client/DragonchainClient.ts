@@ -60,6 +60,7 @@ import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
 import { URLSearchParams as nodeUrlSearchParams } from 'url';
 import { logger } from '../../index';
 import { FailureByDesign } from '../../errors/FailureByDesign';
+import { stringify } from 'ini';
 
 /**
  * @hidden
@@ -748,8 +749,8 @@ export class DragonchainClient {
       if (!process.env.SMART_CONTRACT_ID) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required when not running within a smart contract');
       options.smartContractId = process.env.SMART_CONTRACT_ID;
     }
-    const response = (await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false)) as unknown;
-    return response as string;
+    const response = (await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false)) as Response<string>;
+    return response;
   };
 
   /**
@@ -1075,6 +1076,136 @@ export class DragonchainClient {
     if (options.nonce) body.nonce = options.nonce;
     return (await this.post(`/v1/interchains/ethereum/${options.name}/transaction`, body)) as Response<PublicBlockchainTransactionResponse>;
   };
+
+  /**
+   * Create (or overwrite) a binance wallet/network for interchain use
+   */  
+  public createBinanceInterchain = async (options: {
+    /**
+     * The name of the network to update
+     */
+    name: string;
+    /**
+     * Whether or not this is a testnet wallet/address.  Defaults to True.
+     */
+    testnet?: boolean;
+    /**
+     * The base64 or hex encoded private key to use. Will automatically generate a random one if not provided
+     */
+    privateKey?: string;
+    /**
+     * The endpoint of the binance node to use (i.e. http://my.node.address)
+     */
+    nodeURL?: string;
+    /**
+     * The port being used to hit the RPC endpoints (i.e. 27147)
+     */
+    rpcPort?: number;
+    /**
+     * The port being used to hit the API endpoints (i.e. 1169)
+     */
+    apiPort?: number;
+  }) => {
+    // TODO: 
+    // FYI: example code from corresponding ETH function
+    // if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    // if (options.chainId && !Number.isInteger(options.chainId)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `chainId` must be an integer');
+    // const body: any = { version: '1', name: options.name };
+    // if (options.privateKey) body.private_key = options.privateKey;
+    // if (options.rpcAddress) body.rpc_address = options.rpcAddress;
+    // if (options.chainId) body.chain_id = options.chainId;
+    // return (await this.post(`/v1/interchains/ethereum`, body)) as Response<EthereumInterchainNetwork>;
+  };
+
+
+
+  /**
+   * Update an existing binance wallet/network for interchain use
+   */
+  public updateBinanceInterchain = async (options: {
+    /**
+     * The name of the network to update
+     */
+    name: string;
+    /**
+     * Whether or not this is a testnet wallet/address.  Defaults to True.
+     */
+    testnet?: boolean;
+    /**
+     * The base64 or hex encoded private key to use. Will automatically generate a random one if not provided
+     */
+    privateKey?: string;
+    /**
+     * The endpoint of the binance node to use (i.e. http://my.node.address)
+     */
+    nodeURL?: string;
+    /**
+     * The port being used to hit the RPC endpoints (i.e. 27147)
+     */
+    rpcPort?: number;
+    /**
+     * The port being used to hit the API endpoints (i.e. 1169)
+     */
+    apiPort?: number;
+  }) => {
+    // TODO:
+    // FYI: example code from corresponding ETH function    
+    // if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    // if (options.chainId && !Number.isInteger(options.chainId)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `chainId` must be an integer');
+    // const body: any = { version: '1' };
+    // if (options.privateKey) body.private_key = options.privateKey;
+    // if (options.rpcAddress) body.rpc_address = options.rpcAddress;
+    // if (options.chainId) body.chain_id = options.chainId;
+    // return (await this.patch(`/v1/interchains/ethereum/${options.name}`, body)) as Response<EthereumInterchainNetwork>;    
+  };
+
+
+
+
+  /**
+   * Create and sign a binance transaction using your chain's interchain network
+   */
+  public signBinanceTransaction = async (options: {
+    /**
+     * The name of the binance network to use for signing
+     */
+    name: string;
+    /**
+     * the amount of token to send with this transaction
+     */
+    amount: number;
+    /**
+     * The (hex-encoded) address to send the transaction to
+     */
+    to_address: string;
+    /**
+     * the exchange symbol for the token (defaults to BNB)
+     */
+    symbol?: string;
+    /**
+     * string of data to publish in the transaction (defaults to "")
+     */
+    memo?: string;
+  }) => {
+    // TODO:
+    // FYI: example code from corresponding ETH function
+    // if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    // if (!options.to) throw new FailureByDesign('PARAM_ERROR', 'Parameter `to` is required');
+    // if (!options.value) throw new FailureByDesign('PARAM_ERROR', 'Parameter `value` is required');
+    // const body: any = {
+    //   version: '1',
+    //   to: options.to,
+    //   value: options.value
+    // };
+    // if (options.data) body.data = options.data;
+    // if (options.gasPrice) body.gasPrice = options.gasPrice;
+    // if (options.gas) body.gas = options.gas;
+    // if (options.nonce) body.nonce = options.nonce;
+    // return (await this.post(`/v1/interchains/ethereum/${options.name}/transaction`, body)) as Response<PublicBlockchainTransactionResponse>;
+  };
+
+
+
 
   /**
    * Get a configured interchain network/wallet from the chain
