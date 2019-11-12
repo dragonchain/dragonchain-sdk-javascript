@@ -1113,7 +1113,9 @@ export class DragonchainClient {
     const body: any = { version: '1', name: options.name };
     if (typeof options.testnet === 'boolean') body.testnet = options.testnet;
     if (options.privateKey) body.private_key = options.privateKey;
-    if (options.nodeURL) body.rpc_address = options.nodeURL;
+    if (options.nodeURL) body.node_url = options.nodeURL;
+    if (options.rpcPort) body.rpc_port = options.rpcPort;
+    if (options.rpcPort) body.api_port = options.apiPort;
     return (await this.post(`/v1/interchains/binance`, body)) as Response<BinanceInterchainNetwork>;
   };
 
@@ -1149,10 +1151,12 @@ export class DragonchainClient {
     if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
     if (options.rpcPort && !Number.isInteger(options.rpcPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `rpcPort` must be an integer');
     if (options.apiPort && !Number.isInteger(options.apiPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `apiPort` must be an integer');
-    const body: any = { version: '1', name: options.name };
+    const body: any = { version: '1'};
     if (typeof options.testnet === 'boolean') body.testnet = options.testnet;
     if (options.privateKey) body.private_key = options.privateKey;
-    if (options.nodeURL) body.rpc_address = options.nodeURL;
+    if (options.nodeURL) body.node_url = options.nodeURL;
+    if (options.rpcPort) body.rpc_port = options.rpcPort;
+    if (options.apiPort) body.api_port = options.apiPort;
     return (await this.patch(`/v1/interchains/binance/${options.name}`, body)) as Response<BinanceInterchainNetwork>;
   };
 

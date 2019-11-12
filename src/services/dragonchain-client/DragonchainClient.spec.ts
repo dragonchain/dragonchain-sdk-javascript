@@ -429,13 +429,14 @@ describe('DragonchainClient', () => {
       it('calls #fetch() with correct params', async () => {
         const fakeBody: any = {
           version: '1',
+          name: 'banana',
           testnet: true,
           private_key: 'abcd',
-          nodeURL: 'some IP',
-          rpcPort: 1234,
-          apiPort: 5678
+          node_url: 'some IP',
+          rpc_port: 1234,
+          api_port: 5678
         };
-        await client.createBinanceInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', nodeURL: 'some IP', rpcPort: 1234, apiPort: 6789 });
+        await client.createBinanceInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', nodeURL: 'some IP', rpcPort: 1234, apiPort: 5678 });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
         assert.calledWith(fetch, 'fakeUrl/v1/interchains/binance', obj);
       });
@@ -593,11 +594,11 @@ describe('DragonchainClient', () => {
           version: '1',
           testnet: true,
           private_key: 'abcd',
-          nodeURL: 'some IP',
-          rpcPort: 1234,
-          apiPort: 5678
+          node_url: 'some IP',
+          rpc_port: 1234,
+          api_port: 5678
         };
-        await client.updateBinanceInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', nodeURL: 'some IP', rpcPort: 1234, apiPort: 6789 });
+        await client.updateBinanceInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', nodeURL: 'some IP', rpcPort: 1234, apiPort: 5678 });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
         assert.calledWith(fetch, 'fakeUrl/v1/interchains/binance/banana', obj);
       });
