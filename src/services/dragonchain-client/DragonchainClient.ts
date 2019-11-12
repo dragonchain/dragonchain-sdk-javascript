@@ -1151,7 +1151,7 @@ export class DragonchainClient {
     if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
     if (options.rpcPort && !Number.isInteger(options.rpcPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `rpcPort` must be an integer');
     if (options.apiPort && !Number.isInteger(options.apiPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `apiPort` must be an integer');
-    const body: any = { version: '1'};
+    const body: any = { version: '1' };
     if (typeof options.testnet === 'boolean') body.testnet = options.testnet;
     if (options.privateKey) body.private_key = options.privateKey;
     if (options.nodeURL) body.node_url = options.nodeURL;

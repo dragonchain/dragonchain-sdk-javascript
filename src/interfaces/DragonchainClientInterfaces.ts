@@ -221,7 +221,7 @@ export interface PublicBlockchainTransactionResponse {
   signed: string;
 }
 
-export type SupportedInterchains = 'ethereum' | 'bitcoin'| 'binance';
+export type SupportedInterchains = 'ethereum' | 'bitcoin' | 'binance';
 
 /**
  * @example
