@@ -221,7 +221,7 @@ export interface PublicBlockchainTransactionResponse {
   signed: string;
 }
 
-export type SupportedInterchains = 'ethereum' | 'bitcoin';
+export type SupportedInterchains = 'ethereum' | 'bitcoin'| 'binance';
 
 /**
  * @example
@@ -255,7 +255,7 @@ export interface EthereumInterchainNetwork {
  *   "blockchain": "bitcoin",
  *   "name": "myBTCTestNetwork",
  *   "rpc_address": "http://1.2.3.4:18332",
- *   "tesnet": true,
+ *   "testnet": true,
  *   "address": "n1bUzF6LRENLPaiJRFTcnGLMLsbZSquft1"
  * }
  * ```
@@ -266,6 +266,32 @@ export interface BitcoinInterchainNetwork {
   name: string;
   rpc_address: string;
   testnet: boolean;
+  address: string;
+}
+
+/**
+ * @example
+ * ```json
+ *
+ * {
+ *   "version": "1",
+ *   "blockchain": "binance",
+ *   "name": "myBNBTestNetwork",
+ *   "testnet": True,
+ *   "node_url": "http://1.2.3.4",
+ *   "rpc_port": 26657,
+ *   "api_port": 11699,
+ *   "address": "tbnb1zesqcktldshz7tat9u74duc037frzwvdq83wan"
+ * }
+ * ```
+ */
+export interface BinanceInterchainNetwork {
+  version: string;
+  blockchain: 'binance';
+  name: string;
+  node_url: string;
+  rpc_port: number;
+  api_port: number;
   address: string;
 }
 
@@ -287,7 +313,7 @@ export interface BitcoinInterchainNetwork {
  * ```
  */
 export interface InterchainNetworkList {
-  interchains: BitcoinInterchainNetwork[] | EthereumInterchainNetwork[];
+  interchains: BitcoinInterchainNetwork[] | EthereumInterchainNetwork[] | BinanceInterchainNetwork[];
 }
 
 /**

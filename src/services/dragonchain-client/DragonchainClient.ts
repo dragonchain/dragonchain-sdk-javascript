@@ -48,6 +48,7 @@ import {
   DeleteAPIKeyResponse,
   EthereumInterchainNetwork,
   BitcoinInterchainNetwork,
+  BinanceInterchainNetwork,
   SupportedInterchains,
   InterchainNetworkList,
   CustomTextFieldOptions,
@@ -1106,18 +1107,15 @@ export class DragonchainClient {
      */
     apiPort?: number;
   }) => {
-    // TODO: 
-    // FYI: example code from corresponding ETH function
-    // if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
-    // if (options.chainId && !Number.isInteger(options.chainId)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `chainId` must be an integer');
-    // const body: any = { version: '1', name: options.name };
-    // if (options.privateKey) body.private_key = options.privateKey;
-    // if (options.rpcAddress) body.rpc_address = options.rpcAddress;
-    // if (options.chainId) body.chain_id = options.chainId;
-    // return (await this.post(`/v1/interchains/ethereum`, body)) as Response<EthereumInterchainNetwork>;
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    if (options.rpcPort && !Number.isInteger(options.rpcPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `rpcPort` must be an integer');
+    if (options.apiPort && !Number.isInteger(options.apiPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `apiPort` must be an integer');
+    const body: any = { version: '1', name: options.name };
+    if (typeof options.testnet === 'boolean') body.testnet = options.testnet;
+    if (options.privateKey) body.private_key = options.privateKey;
+    if (options.nodeURL) body.rpc_address = options.nodeURL;
+    return (await this.post(`/v1/interchains/binance`, body)) as Response<BinanceInterchainNetwork>;
   };
-
-
 
   /**
    * Update an existing binance wallet/network for interchain use
@@ -1148,19 +1146,15 @@ export class DragonchainClient {
      */
     apiPort?: number;
   }) => {
-    // TODO:
-    // FYI: example code from corresponding ETH function    
-    // if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
-    // if (options.chainId && !Number.isInteger(options.chainId)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `chainId` must be an integer');
-    // const body: any = { version: '1' };
-    // if (options.privateKey) body.private_key = options.privateKey;
-    // if (options.rpcAddress) body.rpc_address = options.rpcAddress;
-    // if (options.chainId) body.chain_id = options.chainId;
-    // return (await this.patch(`/v1/interchains/ethereum/${options.name}`, body)) as Response<EthereumInterchainNetwork>;    
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    if (options.rpcPort && !Number.isInteger(options.rpcPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `rpcPort` must be an integer');
+    if (options.apiPort && !Number.isInteger(options.apiPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `apiPort` must be an integer');
+    const body: any = { version: '1', name: options.name };
+    if (typeof options.testnet === 'boolean') body.testnet = options.testnet;
+    if (options.privateKey) body.private_key = options.privateKey;
+    if (options.nodeURL) body.rpc_address = options.nodeURL;
+    return (await this.patch(`/v1/interchains/binance/${options.name}`, body)) as Response<BinanceInterchainNetwork>;
   };
-
-
-
 
   /**
    * Create and sign a binance transaction using your chain's interchain network
@@ -1187,25 +1181,18 @@ export class DragonchainClient {
      */
     memo?: string;
   }) => {
-    // TODO:
-    // FYI: example code from corresponding ETH function
-    // if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
-    // if (!options.to) throw new FailureByDesign('PARAM_ERROR', 'Parameter `to` is required');
-    // if (!options.value) throw new FailureByDesign('PARAM_ERROR', 'Parameter `value` is required');
-    // const body: any = {
-    //   version: '1',
-    //   to: options.to,
-    //   value: options.value
-    // };
-    // if (options.data) body.data = options.data;
-    // if (options.gasPrice) body.gasPrice = options.gasPrice;
-    // if (options.gas) body.gas = options.gas;
-    // if (options.nonce) body.nonce = options.nonce;
-    // return (await this.post(`/v1/interchains/ethereum/${options.name}/transaction`, body)) as Response<PublicBlockchainTransactionResponse>;
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    if (!options.amount) throw new FailureByDesign('PARAM_ERROR', 'Parameter `amount` is required');
+    if (!options.to_address) throw new FailureByDesign('PARAM_ERROR', 'Parameter `to_address` is required');    
+    const body: any = {
+      version: '1',
+      amount: options.amount,
+      to_address: options.to_address
+    };
+    if (options.symbol) body.symbol = options.symbol;
+    if (options.memo) body.memo = options.memo;    
+    return (await this.post(`/v1/interchains/binance/${options.name}/transaction`, body)) as Response<PublicBlockchainTransactionResponse>;
   };
-
-
-
 
   /**
    * Get a configured interchain network/wallet from the chain

@@ -425,6 +425,22 @@ describe('DragonchainClient', () => {
       });
     });
 
+    describe('.createBinanceInterchain', () => {
+      it('calls #fetch() with correct params', async () => {
+        const fakeBody: any = {
+          version: '1',
+          testnet: true,
+          private_key: 'abcd',
+          nodeURL: 'some IP',
+          rpcPort: 1234,
+          apiPort: 5678
+        };
+        await client.createBinanceInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', nodeURL: 'some IP', rpcPort: 1234, apiPort: 6789 });
+        const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
+        assert.calledWith(fetch, 'fakeUrl/v1/interchains/binance', obj);
+      });
+    });
+
     describe('.signBitcoinTransaction', () => {
       it('calls #fetch() with correct params', async () => {
         const fakeBody: any = {
@@ -454,6 +470,21 @@ describe('DragonchainClient', () => {
         await client.signEthereumTransaction({ name: 'banana', to: 'some addr', value: 'some value', data: 'someData', gasPrice: 'gas price', gas: 'gas', nonce: 'nonce' });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
         assert.calledWith(fetch, 'fakeUrl/v1/interchains/ethereum/banana/transaction', obj);
+      });
+    });
+
+    describe('.signBinanceTransaction', () => {
+      it('calls #fetch() with correct params', async () => {
+        const fakeBody: any = {
+          version: '1',
+          amount: 123,
+          to_address: 'receiver addy',
+          symbol: 'TOKEN',
+          memo: 'for bananas'
+        };
+        await client.signBinanceTransaction({ name: 'banana', amount: 123, to_address: 'receiver addy', symbol: 'TOKEN', memo: 'for bananas' });
+        const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
+        assert.calledWith(fetch, 'fakeUrl/v1/interchains/binance/banana/transaction', obj);
       });
     });
 
@@ -546,13 +577,29 @@ describe('DragonchainClient', () => {
       it('calls #fetch() with correct params', async () => {
         const fakeBody: any = {
           version: '1',
-          private_key: 'private key',
+          private_key: 'abcd',
           rpc_address: 'some rpc',
           chain_id: 12
         };
-        await client.updateEthereumInterchain({ name: 'banana', privateKey: 'private key', rpcAddress: 'some rpc', chainId: 12 });
+        await client.updateEthereumInterchain({ name: 'banana', privateKey: 'abcd', rpcAddress: 'some rpc', chainId: 12 });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
         assert.calledWith(fetch, 'fakeUrl/v1/interchains/ethereum/banana', obj);
+      });
+    });
+
+    describe('.updateBinanceInterchain', () => {
+      it('calls #fetch() with correct params', async () => {
+        const fakeBody: any = {
+          version: '1',
+          testnet: true,
+          private_key: 'abcd',
+          nodeURL: 'some IP',
+          rpcPort: 1234,
+          apiPort: 5678
+        };
+        await client.updateBinanceInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', nodeURL: 'some IP', rpcPort: 1234, apiPort: 6789 });
+        const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
+        assert.calledWith(fetch, 'fakeUrl/v1/interchains/binance/banana', obj);
       });
     });
   });
