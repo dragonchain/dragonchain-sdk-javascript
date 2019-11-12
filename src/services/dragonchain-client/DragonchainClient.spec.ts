@@ -483,7 +483,7 @@ describe('DragonchainClient', () => {
           symbol: 'TOKEN',
           memo: 'for bananas'
         };
-        await client.signBinanceTransaction({ name: 'banana', amount: 123, to_address: 'receiver addy', symbol: 'TOKEN', memo: 'for bananas' });
+        await client.signBinanceTransaction({ name: 'banana', amount: 123, toAddress: 'receiver addy', symbol: 'TOKEN', memo: 'for bananas' });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
         assert.calledWith(fetch, 'fakeUrl/v1/interchains/binance/banana/transaction', obj);
       });

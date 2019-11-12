@@ -749,8 +749,7 @@ export class DragonchainClient {
       if (!process.env.SMART_CONTRACT_ID) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required when not running within a smart contract');
       options.smartContractId = process.env.SMART_CONTRACT_ID;
     }
-    const response = (await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false)) as Response<string>;
-    return response;
+    return (await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false)) as Response<string>;
   };
 
   /**
@@ -1091,7 +1090,7 @@ export class DragonchainClient {
      */
     testnet?: boolean;
     /**
-     * The base64 or hex encoded private key to use. Will automatically generate a random one if not provided
+     * The base64 or hex encoded private key (or mnemonic) to use. Will automatically generate a random one if not provided
      */
     privateKey?: string;
     /**
@@ -1175,7 +1174,7 @@ export class DragonchainClient {
     /**
      * The (hex-encoded) address to send the transaction to
      */
-    to_address: string;
+    toAddress: string;
     /**
      * the exchange symbol for the token (defaults to BNB)
      */
@@ -1187,11 +1186,11 @@ export class DragonchainClient {
   }) => {
     if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
     if (!options.amount) throw new FailureByDesign('PARAM_ERROR', 'Parameter `amount` is required');
-    if (!options.to_address) throw new FailureByDesign('PARAM_ERROR', 'Parameter `to_address` is required');
+    if (!options.toAddress) throw new FailureByDesign('PARAM_ERROR', 'Parameter `toAddress` is required');
     const body: any = {
       version: '1',
       amount: options.amount,
-      to_address: options.to_address
+      to_address: options.toAddress
     };
     if (options.symbol) body.symbol = options.symbol;
     if (options.memo) body.memo = options.memo;
