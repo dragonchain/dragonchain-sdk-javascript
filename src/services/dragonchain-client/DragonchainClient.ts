@@ -61,7 +61,6 @@ import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
 import { URLSearchParams as nodeUrlSearchParams } from 'url';
 import { logger } from '../../index';
 import { FailureByDesign } from '../../errors/FailureByDesign';
-import { stringify } from 'ini';
 
 /**
  * @hidden
@@ -1080,7 +1079,8 @@ export class DragonchainClient {
 
   /**
    * Create (or overwrite) a binance wallet/network for interchain use
-   */  
+   */
+
   public createBinanceInterchain = async (options: {
     /**
      * The name of the network to update
@@ -1183,14 +1183,14 @@ export class DragonchainClient {
   }) => {
     if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
     if (!options.amount) throw new FailureByDesign('PARAM_ERROR', 'Parameter `amount` is required');
-    if (!options.to_address) throw new FailureByDesign('PARAM_ERROR', 'Parameter `to_address` is required');    
+    if (!options.to_address) throw new FailureByDesign('PARAM_ERROR', 'Parameter `to_address` is required');
     const body: any = {
       version: '1',
       amount: options.amount,
       to_address: options.to_address
     };
     if (options.symbol) body.symbol = options.symbol;
-    if (options.memo) body.memo = options.memo;    
+    if (options.memo) body.memo = options.memo;
     return (await this.post(`/v1/interchains/binance/${options.name}/transaction`, body)) as Response<PublicBlockchainTransactionResponse>;
   };
 
