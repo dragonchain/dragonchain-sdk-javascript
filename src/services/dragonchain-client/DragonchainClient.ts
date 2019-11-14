@@ -48,6 +48,7 @@ import {
   DeleteAPIKeyResponse,
   EthereumInterchainNetwork,
   BitcoinInterchainNetwork,
+  BinanceInterchainNetwork,
   SupportedInterchains,
   InterchainNetworkList,
   CustomTextFieldOptions,
@@ -748,8 +749,7 @@ export class DragonchainClient {
       if (!process.env.SMART_CONTRACT_ID) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required when not running within a smart contract');
       options.smartContractId = process.env.SMART_CONTRACT_ID;
     }
-    const response = (await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false)) as unknown;
-    return response as string;
+    return (await this.get(`/v1/get/${options.smartContractId}/${options.key}`, false)) as Response<string>;
   };
 
   /**
@@ -1077,6 +1077,127 @@ export class DragonchainClient {
   };
 
   /**
+   * Create (or overwrite) a binance wallet/network for interchain use
+   */
+
+  public createBinanceInterchain = async (options: {
+    /**
+     * The name of the network to update
+     */
+    name: string;
+    /**
+     * Whether or not this is a testnet wallet/address.  Defaults to True.
+     */
+    testnet?: boolean;
+    /**
+     * The base64 or hex encoded private key (or mnemonic) to use. Will automatically generate a random one if not provided
+     */
+    privateKey?: string;
+    /**
+     * The endpoint of the binance node to use (i.e. http://my.node.address)
+     */
+    nodeURL?: string;
+    /**
+     * The port being used to hit the RPC endpoints (i.e. 27147)
+     */
+    rpcPort?: number;
+    /**
+     * The port being used to hit the API endpoints (i.e. 1169)
+     */
+    apiPort?: number;
+  }) => {
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    if (options.rpcPort && !Number.isInteger(options.rpcPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `rpcPort` must be an integer');
+    if (options.apiPort && !Number.isInteger(options.apiPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `apiPort` must be an integer');
+    const body: any = { version: '1', name: options.name };
+    if (typeof options.testnet === 'boolean') body.testnet = options.testnet;
+    if (options.privateKey) body.private_key = options.privateKey;
+    if (options.nodeURL) body.node_url = options.nodeURL;
+    if (options.rpcPort) body.rpc_port = options.rpcPort;
+    if (options.rpcPort) body.api_port = options.apiPort;
+    return (await this.post(`/v1/interchains/binance`, body)) as Response<BinanceInterchainNetwork>;
+  };
+
+  /**
+   * Update an existing binance wallet/network for interchain use
+   */
+  public updateBinanceInterchain = async (options: {
+    /**
+     * The name of the network to update
+     */
+    name: string;
+    /**
+     * Whether or not this is a testnet wallet/address.  Defaults to True.
+     */
+    testnet?: boolean;
+    /**
+     * The base64 or hex encoded private key to use. Will automatically generate a random one if not provided
+     */
+    privateKey?: string;
+    /**
+     * The endpoint of the binance node to use (i.e. http://my.node.address)
+     */
+    nodeURL?: string;
+    /**
+     * The port being used to hit the RPC endpoints (i.e. 27147)
+     */
+    rpcPort?: number;
+    /**
+     * The port being used to hit the API endpoints (i.e. 1169)
+     */
+    apiPort?: number;
+  }) => {
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    if (options.rpcPort && !Number.isInteger(options.rpcPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `rpcPort` must be an integer');
+    if (options.apiPort && !Number.isInteger(options.apiPort)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `apiPort` must be an integer');
+    const body: any = { version: '1' };
+    if (typeof options.testnet === 'boolean') body.testnet = options.testnet;
+    if (options.privateKey) body.private_key = options.privateKey;
+    if (options.nodeURL) body.node_url = options.nodeURL;
+    if (options.rpcPort) body.rpc_port = options.rpcPort;
+    if (options.apiPort) body.api_port = options.apiPort;
+    return (await this.patch(`/v1/interchains/binance/${options.name}`, body)) as Response<BinanceInterchainNetwork>;
+  };
+
+  /**
+   * Create and sign a binance transaction using your chain's interchain network
+   */
+  public signBinanceTransaction = async (options: {
+    /**
+     * The name of the binance network to use for signing
+     */
+    name: string;
+    /**
+     * the amount of token to send with this transaction
+     */
+    amount: number;
+    /**
+     * The (hex-encoded) address to send the transaction to
+     */
+    toAddress: string;
+    /**
+     * the exchange symbol for the token (defaults to BNB)
+     */
+    symbol?: string;
+    /**
+     * string of data to publish in the transaction (defaults to "")
+     */
+    memo?: string;
+  }) => {
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    if (!options.amount) throw new FailureByDesign('PARAM_ERROR', 'Parameter `amount` is required');
+    if (!options.toAddress) throw new FailureByDesign('PARAM_ERROR', 'Parameter `toAddress` is required');
+    const body: any = {
+      version: '1',
+      amount: options.amount,
+      to_address: options.toAddress
+    };
+    if (options.symbol) body.symbol = options.symbol;
+    if (options.memo) body.memo = options.memo;
+    return (await this.post(`/v1/interchains/binance/${options.name}/transaction`, body)) as Response<PublicBlockchainTransactionResponse>;
+  };
+
+  /**
    * Get a configured interchain network/wallet from the chain
    */
   public getInterchainNetwork = async (options: {
@@ -1347,7 +1468,7 @@ export class DragonchainClient {
   /**
    * @hidden
    */
-  private generateQueryString = (queryObject: Map<string, string | number>) => `?${UrlSearchParams(queryObject)}`;
+  private generateQueryString = (queryObject: Map<string, string | number>) => (Object.keys(queryObject).length > 0 ? `?${UrlSearchParams(queryObject)}` : '');
 
   /**
    * @hidden

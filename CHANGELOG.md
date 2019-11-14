@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.1.0
+
+- **Feature:**
+
+  - Add support for new Binance interchain endpoints with client functions:
+    - `createBinanceInterchain`
+    - `updateBinanceInterchain`
+    - `signBinanceTransaction`
+
+- **Bug Fix**
+  - Remove erroneous `?` from query string when no query string parameters are provided
+  - Fix typing bug with `getSmartContractObject`
+
 ## 4.0.0
 
 Because Dragonchain has a breaking change to replace its indexing solution, this is also a breaking SDK change for queries and custom indexing.
