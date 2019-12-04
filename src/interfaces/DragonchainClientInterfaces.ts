@@ -324,7 +324,19 @@ export interface InterchainNetworkList {
  *   "key": "d5K20n1VfHZYIgk55UdJO0bTyMTnjasdGkNyg66ASnd",
  *   "id": "PDJSYJNBTDBP",
  *   "registration_time": 1548604295,
- *   "nickname": "key1"
+ *   "nickname": "key1",
+ *   "root": false,
+ *   "permissions_document": {
+ *     "version": "1",
+ *     "default_allow": true,
+ *     "permissions": {
+ *       "api_keys": {
+ *         "allow_create": false,
+ *         "allow_update": false,
+ *         "allow_delete": false
+ *       }
+ *     }
+ *   }
  * }
  * ```
  */
@@ -333,7 +345,8 @@ export interface CreateAPIKeyResponse {
   id: string;
   registration_time: number;
   nickname: string;
-  root?: boolean;
+  root: boolean;
+  permissions_document: PermissionsDocument;
 }
 
 /**
@@ -356,13 +369,31 @@ export interface DeleteAPIKeyResponse {
  * {
  *   "id": "PDJSYJNBTDBP",
  *   "registration_time": 1548604295
+ *   "nickname": "",
+ *   "root": false,
+ *   "permissions_document": {
+ *     "version": "1",
+ *     "default_allow": true,
+ *     "permissions": {
+ *       "api_keys": {
+ *         "allow_create": false,
+ *         "allow_update": false,
+ *         "allow_delete": false
+ *       }
+ *     }
+ *   }
  * }
  * ```
  */
 export interface GetAPIKeyResponse {
   id: string;
+  /**
+   * Unix timestamp (integer) when this key was created. Could be 0 if root key.
+   */
   registration_time: number;
-  nickname?: string;
+  nickname: string;
+  root: boolean;
+  permissions_document: PermissionsDocument;
 }
 
 /**
@@ -371,10 +402,17 @@ export interface GetAPIKeyResponse {
  *
  * {
  *   "keys": [
- *      {
- *         "id": "PDJSYJNBTDBP",
- *         "registration_time": 1548604295
- *      }
+ *     {
+ *       "id": "YLDSY14NTNJ8",
+ *       "registration_time": 0
+ *       "nickname": "",
+ *       "root": true,
+ *       "permissions_document": {
+ *         "version": "1",
+ *         "default_allow": true,
+ *         "permissions": {}
+ *       }
+ *     }
  *   ]
  * }
  * ```
@@ -1077,4 +1115,107 @@ export interface TransactionTypeResponse {
  */
 export interface TransactionTypeListResponse {
   transaction_types: TransactionTypeResponse[];
+}
+
+export interface PermissionsDocumentDefaultEndpoint {
+  allowed: boolean;
+}
+
+export interface PermissionsDocument {
+  version: '1';
+  default_allow: boolean;
+  permissions: {
+    allow_create?: boolean;
+    allow_read?: boolean;
+    allow_update?: boolean;
+    allow_delete?: boolean;
+    apiKeys?: {
+      allow_create?: boolean;
+      allow_read?: boolean;
+      allow_update?: boolean;
+      allow_delete?: boolean;
+      create_api_key?: PermissionsDocumentDefaultEndpoint;
+      get_api_key?: PermissionsDocumentDefaultEndpoint;
+      list_api_keys?: PermissionsDocumentDefaultEndpoint;
+      delete_api_key?: PermissionsDocumentDefaultEndpoint;
+      update_api_key?: PermissionsDocumentDefaultEndpoint;
+    };
+    blocks?: {
+      allow_create?: boolean;
+      allow_read?: boolean;
+      allow_update?: boolean;
+      allow_delete?: boolean;
+      get_block?: PermissionsDocumentDefaultEndpoint;
+      query_blocks?: PermissionsDocumentDefaultEndpoint;
+    };
+    interchains?: {
+      allow_create?: boolean;
+      allow_read?: boolean;
+      allow_update?: boolean;
+      allow_delete?: boolean;
+      create_interchain?: PermissionsDocumentDefaultEndpoint;
+      update_interchain?: PermissionsDocumentDefaultEndpoint;
+      create_interchain_transaction?: PermissionsDocumentDefaultEndpoint;
+      list_interchains?: PermissionsDocumentDefaultEndpoint;
+      get_interchain?: PermissionsDocumentDefaultEndpoint;
+      delete_interchain?: PermissionsDocumentDefaultEndpoint;
+      get_default_interchain?: PermissionsDocumentDefaultEndpoint;
+      set_default_interchain?: PermissionsDocumentDefaultEndpoint;
+      get_interchain_legacy?: PermissionsDocumentDefaultEndpoint;
+      create_interchain_transaction_legacy?: PermissionsDocumentDefaultEndpoint;
+    };
+    misc?: {
+      allow_create?: boolean;
+      allow_read?: boolean;
+      allow_update?: boolean;
+      allow_delete?: boolean;
+      get_status?: PermissionsDocumentDefaultEndpoint;
+    };
+    contracts?: {
+      allow_create?: boolean;
+      allow_read?: boolean;
+      allow_update?: boolean;
+      allow_delete?: boolean;
+      get_contract?: PermissionsDocumentDefaultEndpoint;
+      get_contract_logs?: PermissionsDocumentDefaultEndpoint;
+      list_contracts?: PermissionsDocumentDefaultEndpoint;
+      create_contract?: PermissionsDocumentDefaultEndpoint;
+      update_contract?: PermissionsDocumentDefaultEndpoint;
+      delete_contract?: PermissionsDocumentDefaultEndpoint;
+      get_contract_object?: PermissionsDocumentDefaultEndpoint;
+      list_contract_objects?: PermissionsDocumentDefaultEndpoint;
+    };
+    transactionTypes?: {
+      allow_create?: boolean;
+      allow_read?: boolean;
+      allow_update?: boolean;
+      allow_delete?: boolean;
+      create_transaction_type?: PermissionsDocumentDefaultEndpoint;
+      delete_transaction_type?: PermissionsDocumentDefaultEndpoint;
+      list_transaction_types?: PermissionsDocumentDefaultEndpoint;
+      get_transaction_type?: PermissionsDocumentDefaultEndpoint;
+    };
+    transactions?: {
+      allow_create?: boolean;
+      allow_read?: boolean;
+      allow_update?: boolean;
+      allow_delete?: boolean;
+      create_transaction?: {
+        allowed?: boolean;
+        transaction_types?: {
+          [txn_type: string]: boolean;
+        };
+      };
+      query_transactions?: PermissionsDocumentDefaultEndpoint;
+      get_transaction?: PermissionsDocumentDefaultEndpoint;
+    };
+    verifications?: {
+      allow_create?: boolean;
+      allow_read?: boolean;
+      allow_update?: boolean;
+      allow_delete?: boolean;
+      get_verifications?: PermissionsDocumentDefaultEndpoint;
+      get_pending_verifications?: PermissionsDocumentDefaultEndpoint;
+    };
+  };
 }

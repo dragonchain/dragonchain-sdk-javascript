@@ -54,7 +54,8 @@ import {
   CustomTextFieldOptions,
   CustomNumberFieldOptions,
   CustomTagFieldOptions,
-  SmartContractLogs
+  SmartContractLogs,
+  PermissionsDocument
 } from '../../interfaces/DragonchainClientInterfaces';
 import { CredentialService, HmacAlgorithm } from '../credential-service/CredentialService';
 import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
@@ -156,10 +157,15 @@ export class DragonchainClient {
        * nickname for the newly created key
        */
       nickname?: string;
+      /**
+       * Permissions document to use with this key
+       */
+      permissionsDocument?: PermissionsDocument;
     } = {}
   ) => {
     const body: any = {};
     if (options.nickname) body['nickname'] = options.nickname;
+    if (options.permissionsDocument) body['permissions_document'] = options.permissionsDocument;
     return (await this.post('/v1/api-key', body)) as Response<CreateAPIKeyResponse>;
   };
 
@@ -207,10 +213,17 @@ export class DragonchainClient {
     /**
      * New nickname to set for key
      */
-    nickname: string;
+    nickname?: string;
+    /**
+     * New permissions document to assign to this key
+     */
+    permissionsDocument?: PermissionsDocument;
   }) => {
-    if (!options.keyId || !options.nickname) throw new FailureByDesign('PARAM_ERROR', 'Parameter `keyId` and `nickname` are required');
-    return (await this.put(`/v1/api-key/${options.keyId}`, { nickname: options.nickname })) as Response<SimpleResponse>;
+    if (!options.keyId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `keyId` is required');
+    const body: any = {};
+    if (options.nickname) body['nickname'] = options.nickname;
+    if (options.permissionsDocument) body['permissions_document'] = options.permissionsDocument;
+    return (await this.put(`/v1/api-key/${options.keyId}`, body)) as Response<GetAPIKeyResponse>;
   };
 
   /**
