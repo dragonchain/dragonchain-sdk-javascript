@@ -291,8 +291,8 @@ describe('DragonchainClient', () => {
 
     describe('.createApiKey', () => {
       it('calls #fetch() with correct params', async () => {
-        await client.createApiKey();
-        const expectedBody = {};
+        await client.createApiKey({ nickname: 'mynickname', permissionsDocument: { version: '1', default_allow: true, permissions: {} } });
+        const expectedBody = { nickname: 'mynickname', permissions_document: { version: '1', default_allow: true, permissions: {} } };
         assert.calledWith(fetch, 'fakeUrl/v1/api-key', { ...expectedFetchOptions, body: JSON.stringify(expectedBody) });
       });
     });
@@ -522,6 +522,14 @@ describe('DragonchainClient', () => {
         timestamp: fakeTime
       }
     };
+
+    describe('.updateApiKey', () => {
+      it('calls #fetch() with correct params', async () => {
+        await client.updateApiKey({ keyId: 'someKeyId', nickname: 'mynickname', permissionsDocument: { version: '1', default_allow: true, permissions: {} } });
+        const expectedBody = { nickname: 'mynickname', permissions_document: { version: '1', default_allow: true, permissions: {} } };
+        assert.calledWith(fetch, 'fakeUrl/v1/api-key/someKeyId', { ...expectedFetchOptions, body: JSON.stringify(expectedBody) });
+      });
+    });
 
     describe('.updateSmartContract', () => {
       it('calls #fetch() with correct params', async () => {

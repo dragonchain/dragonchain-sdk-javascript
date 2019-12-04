@@ -1,15 +1,20 @@
 # Changelog
 
+## 4.2.0
+
+- **Feature:**
+  - Support new permissioning feature for api keys
+- **Development:**
+  - Update development dependencies
+
 ## 4.1.0
 
 - **Feature:**
-
   - Add support for new Binance interchain endpoints with client functions:
     - `createBinanceInterchain`
     - `updateBinanceInterchain`
     - `signBinanceTransaction`
-
-- **Bug Fix**
+- **Bug Fix:**
   - Remove erroneous `?` from query string when no query string parameters are provided
   - Fix typing bug with `getSmartContractObject`
 
@@ -50,7 +55,7 @@ Check [the docs](https://node-sdk-docs.dragonchain.com/latest/) for more details
   - Add NodeJS 12 to PR checks
 - **Packaging:**
   - Remove some unnecessary files from the packaged release
-- **Bug Fix**
+- **Bug Fix:**
   - Increase precision on timestamp sent to Dragonchain to prevent replay attack error for subsequent requests
 
 ## 3.2.0
