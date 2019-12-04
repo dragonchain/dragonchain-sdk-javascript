@@ -19,8 +19,7 @@ import { createClient } from './services/dragonchain-client/DragonchainClient';
 /**
  * @hidden
  */
-// tslint:disable-next-line:no-empty
-const nullLog = () => {};
+const nullLog = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 /**
  * @hidden
  */
