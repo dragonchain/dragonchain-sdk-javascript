@@ -6,6 +6,7 @@
   - Support new permissioning feature for api keys
 - **Development:**
   - Update development dependencies
+  - Add rdaquilante as a tertiary code owner
 
 ## 4.1.0
 
