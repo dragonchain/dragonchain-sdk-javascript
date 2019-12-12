@@ -651,6 +651,7 @@ export interface SmartContractList {
  *   "hashAlgo": "blake2b",
  *   "version": "3.3.1",
  *   "encryptionAlgo": "secp256k1"
+ *   "indexingEnabled": true
  * }
  * ```
  */
@@ -683,6 +684,10 @@ export interface L1DragonchainStatusResult {
    * Encryption algorithm used for blocks on this chain
    */
   encryptionAlgo: string;
+  /**
+   * Whether or not indexing is enabled on this chain
+   */
+  indexingEnabled: boolean;
 }
 
 /**
