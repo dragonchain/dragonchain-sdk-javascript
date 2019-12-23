@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.2.1
+
+- **Feature:**
+  - Typing support for indexingEnabled return from getStatus
+- **Development:**
+  - Deprecate ETC Testnet (Morden)
+
 ## 4.2.0
 
 - **Feature:**

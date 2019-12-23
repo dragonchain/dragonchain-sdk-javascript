@@ -429,7 +429,6 @@ export interface ListAPIKeyResponse {
  *   "eth_mainnet": "0xa5C32bE6323Cd5E2BC87468F5F2D91849cDb3A3D",
  *   "eth_ropsten": "0x558c01dd95335749a29D040b24a183D8f7637BC8",
  *   "etc_mainnet": "0xf7A802DB95D783254A1f29F47785BA080daBF1db",
- *   "etc_morden": "0x5dd0ac246B54f0267Ee4f33a074382D19AD0fa66",
  *   "btc_mainnet": "17eK35gAem9Pezzs1RdntsoK9kK8dsF7DQ",
  *   "btc_testnet3": "mrgFVPYFMojNsx3gih84PSbQCDiB4rnoQJ"
  * }
@@ -439,7 +438,6 @@ export interface PublicBlockchainAddressListResponse {
   eth_mainnet?: string;
   etc_mainnet?: string;
   eth_ropsten?: string;
-  etc_morden?: string;
   btc_mainnet?: string;
   btc_testnet3?: string;
 }
@@ -651,6 +649,7 @@ export interface SmartContractList {
  *   "hashAlgo": "blake2b",
  *   "version": "3.3.1",
  *   "encryptionAlgo": "secp256k1"
+ *   "indexingEnabled": true
  * }
  * ```
  */
@@ -683,6 +682,10 @@ export interface L1DragonchainStatusResult {
    * Encryption algorithm used for blocks on this chain
    */
   encryptionAlgo: string;
+  /**
+   * Whether or not indexing is enabled on this chain
+   */
+  indexingEnabled: boolean;
 }
 
 /**
