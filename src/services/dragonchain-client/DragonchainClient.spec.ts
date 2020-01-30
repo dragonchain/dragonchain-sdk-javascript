@@ -247,10 +247,16 @@ describe('DragonchainClient', () => {
     };
 
     describe('.deleteSmartContract', () => {
-      it('calls #fetch() with correct params', async () => {
+      it('calls #fetch() with correct params (smart contract ID)', async () => {
         const param = 'banana';
         await client.deleteSmartContract({ smartContractId: param });
         assert.calledWith(fetch, 'fakeUrl/v1/contract/banana', expectedFetchOptions);
+      });
+
+      it('calls #fetch() with correct params (transaction type)', async () => {
+        const param = 'banana';
+        await client.deleteSmartContract({ transactionType: param });
+        assert.calledWith(fetch, 'fakeUrl/v1/contract/txn_type/banana', expectedFetchOptions);
       });
     });
 
