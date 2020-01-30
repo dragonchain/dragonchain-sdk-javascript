@@ -1,6 +1,6 @@
 {
   "name": "dragonchain-sdk",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "Dragonchain SDK for Node.JS and the Browser",
   "license": "Apache-2.0",
   "homepage": "https://github.com/dragonchain/dragonchain-sdk-javascript#readme",
