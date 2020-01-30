@@ -655,10 +655,16 @@ export class DragonchainClient {
     /**
      * The id of the smart contract to delete. Should be a guid
      */
-    smartContractId: string;
+    smartContractId?: string;
+    /**
+     * Transaction type of the smart contract, mutually exclusive with smartContractId
+     */
+    transactionType?: string;
   }) => {
-    if (!options.smartContractId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required');
-    return (await this.delete(`/v1/contract/${options.smartContractId}`)) as Response<SimpleResponse>;
+    if (options.smartContractId && options.transactionType) throw new FailureByDesign('PARAM_ERROR', 'Only one of `smartContractId` or `transactionType` can be specified');
+    if (options.smartContractId) return (await this.delete(`/v1/contract/${options.smartContractId}`)) as Response<SimpleResponse>;
+    if (options.transactionType) return (await this.delete(`/v1/contract/txn_type/${options.transactionType}`)) as Response<SimpleResponse>;
+    throw new FailureByDesign('PARAM_ERROR', 'At least one of `smartContractId` or `transactionType` must be supplied');
   };
 
   /**
