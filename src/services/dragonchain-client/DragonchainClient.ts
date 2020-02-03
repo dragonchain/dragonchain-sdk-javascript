@@ -51,6 +51,7 @@ import {
   BinanceInterchainNetwork,
   SupportedInterchains,
   InterchainNetworkList,
+  PublishedInterchainTransaction,
   CustomTextFieldOptions,
   CustomNumberFieldOptions,
   CustomTagFieldOptions,
@@ -1293,6 +1294,35 @@ export class DragonchainClient {
    */
   public getDefaultInterchainNetwork = async () => {
     return (await this.get('/v1/interchains/default')) as Response<EthereumInterchainNetwork | BitcoinInterchainNetwork>;
+  };
+
+  /**
+   * Publish an interchain transaction that's already been signed
+   */
+  public publishInterchainTransaction = async (options: {
+    /**
+     * The blockchain type to set (i.e. 'bitcoin', 'ethereum')
+     */
+    blockchain: SupportedInterchains;
+    /**
+     * The name of that blockchain's network to use (set when creating the network)
+     */
+    name: string;
+    /**
+     * Signed transaction string (return from sign<network>Transaction function)
+     */
+    signedTransaction: string;
+  }) => {
+    if (!options.blockchain) throw new FailureByDesign('PARAM_ERROR', 'Parameter `blockchain` is required');
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    if (!options.signedTransaction) throw new FailureByDesign('PARAM_ERROR', 'Parameter `signedTransaction` is required');
+    const body: any = {
+      version: '1',
+      blockchain: options.blockchain,
+      name: options.name,
+      signed_txn: options.signedTransaction
+    };
+    return (await this.post('/v1/interchains/transaction/publish', body)) as Response<PublishedInterchainTransaction>;
   };
 
   /**

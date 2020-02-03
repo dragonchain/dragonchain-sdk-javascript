@@ -317,6 +317,20 @@ export interface InterchainNetworkList {
 }
 
 /**
+ * Transaction hash (or equivalent) of a published interchain transaction
+ * @example
+ * ```json
+ *
+ * {
+ *   "transaction": "0x37d1b1032288f7b434973c7840123bbf1acdb5ef5e40dda94257208ccf6c0c9f"
+ * }
+ * ```
+ */
+export interface PublishedInterchainTransaction {
+  transaction: string;
+}
+
+/**
  * @example
  * ```json
  *
