@@ -4,6 +4,11 @@
 
 - **Feature**
   - Add option for deleting smart contract by transaction type
+  - Add support for publishing signed interchain transactions
+  - Export `DragonchainClient` type for external use
+- **Development:**
+  - Update development dependencies
+  - Remove codeowners
 
 ## 4.2.1
 

@@ -507,6 +507,20 @@ describe('DragonchainClient', () => {
         assert.calledWith(fetch, 'fakeUrl/v1/interchains/default', obj);
       });
     });
+
+    describe('.publishInterchainTransaction', () => {
+      it('calls #fetch() with correct params', async () => {
+        const fakeBody: any = {
+          version: '1',
+          blockchain: 'bitcoin',
+          name: 'banana',
+          signed_txn: 'banana'
+        };
+        await client.publishInterchainTransaction({ name: 'banana', blockchain: 'bitcoin', signedTransaction: 'banana' });
+        const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
+        assert.calledWith(fetch, 'fakeUrl/v1/interchains/transaction/publish', obj);
+      });
+    });
   });
 
   describe('PUT', () => {
