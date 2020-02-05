@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Dragonchain, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Dragonchain, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ import {
   BinanceInterchainNetwork,
   SupportedInterchains,
   InterchainNetworkList,
+  PublishedInterchainTransaction,
   CustomTextFieldOptions,
   CustomNumberFieldOptions,
   CustomTagFieldOptions,
@@ -655,10 +656,16 @@ export class DragonchainClient {
     /**
      * The id of the smart contract to delete. Should be a guid
      */
-    smartContractId: string;
+    smartContractId?: string;
+    /**
+     * Transaction type of the smart contract, mutually exclusive with smartContractId
+     */
+    transactionType?: string;
   }) => {
-    if (!options.smartContractId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `smartContractId` is required');
-    return (await this.delete(`/v1/contract/${options.smartContractId}`)) as Response<SimpleResponse>;
+    if (options.smartContractId && options.transactionType) throw new FailureByDesign('PARAM_ERROR', 'Only one of `smartContractId` or `transactionType` can be specified');
+    if (options.smartContractId) return (await this.delete(`/v1/contract/${options.smartContractId}`)) as Response<SimpleResponse>;
+    if (options.transactionType) return (await this.delete(`/v1/contract/txn_type/${options.transactionType}`)) as Response<SimpleResponse>;
+    throw new FailureByDesign('PARAM_ERROR', 'At least one of `smartContractId` or `transactionType` must be supplied');
   };
 
   /**
@@ -1287,6 +1294,35 @@ export class DragonchainClient {
    */
   public getDefaultInterchainNetwork = async () => {
     return (await this.get('/v1/interchains/default')) as Response<EthereumInterchainNetwork | BitcoinInterchainNetwork>;
+  };
+
+  /**
+   * Publish an interchain transaction that's already been signed
+   */
+  public publishInterchainTransaction = async (options: {
+    /**
+     * The blockchain type to set (i.e. 'bitcoin', 'ethereum')
+     */
+    blockchain: SupportedInterchains;
+    /**
+     * The name of that blockchain's network to use (set when creating the network)
+     */
+    name: string;
+    /**
+     * Signed transaction string (return from sign<network>Transaction function)
+     */
+    signedTransaction: string;
+  }) => {
+    if (!options.blockchain) throw new FailureByDesign('PARAM_ERROR', 'Parameter `blockchain` is required');
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    if (!options.signedTransaction) throw new FailureByDesign('PARAM_ERROR', 'Parameter `signedTransaction` is required');
+    const body: any = {
+      version: '1',
+      blockchain: options.blockchain,
+      name: options.name,
+      signed_txn: options.signedTransaction
+    };
+    return (await this.post('/v1/interchains/transaction/publish', body)) as Response<PublishedInterchainTransaction>;
   };
 
   /**

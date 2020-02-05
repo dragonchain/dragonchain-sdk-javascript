@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Dragonchain, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Dragonchain, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createClient } from './services/dragonchain-client/DragonchainClient';
+import { createClient, DragonchainClient as Client } from './services/dragonchain-client/DragonchainClient';
 
 /**
  * @hidden
@@ -38,3 +38,4 @@ const setLogger = (newLogger: any = { log: nullLog, info: nullLog, warn: nullLog
 setLogger(); // actually initialize the singleton on initial import
 
 export { createClient, setLogger, logger };
+export type DragonchainClient = typeof Client;

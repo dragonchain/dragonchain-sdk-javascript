@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Dragonchain, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Dragonchain, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -247,10 +247,16 @@ describe('DragonchainClient', () => {
     };
 
     describe('.deleteSmartContract', () => {
-      it('calls #fetch() with correct params', async () => {
+      it('calls #fetch() with correct params (smart contract ID)', async () => {
         const param = 'banana';
         await client.deleteSmartContract({ smartContractId: param });
         assert.calledWith(fetch, 'fakeUrl/v1/contract/banana', expectedFetchOptions);
+      });
+
+      it('calls #fetch() with correct params (transaction type)', async () => {
+        const param = 'banana';
+        await client.deleteSmartContract({ transactionType: param });
+        assert.calledWith(fetch, 'fakeUrl/v1/contract/txn_type/banana', expectedFetchOptions);
       });
     });
 
@@ -499,6 +505,20 @@ describe('DragonchainClient', () => {
         await client.setDefaultInterchainNetwork({ name: 'banana', blockchain: 'bitcoin' });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
         assert.calledWith(fetch, 'fakeUrl/v1/interchains/default', obj);
+      });
+    });
+
+    describe('.publishInterchainTransaction', () => {
+      it('calls #fetch() with correct params', async () => {
+        const fakeBody: any = {
+          version: '1',
+          blockchain: 'bitcoin',
+          name: 'banana',
+          signed_txn: 'banana'
+        };
+        await client.publishInterchainTransaction({ name: 'banana', blockchain: 'bitcoin', signedTransaction: 'banana' });
+        const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
+        assert.calledWith(fetch, 'fakeUrl/v1/interchains/transaction/publish', obj);
       });
     });
   });
