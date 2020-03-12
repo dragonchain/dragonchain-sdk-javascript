@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.3.1
+
+- **Bug Fix:**
+  - Fix type export for DragonchainClient and export all used types
+- **Development:**
+  - Update dependencies
+  - Use typescript 3.8
+
 ## 4.3.0
 
 - **Feature**
