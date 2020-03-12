@@ -38,4 +38,5 @@ const setLogger = (newLogger: any = { log: nullLog, info: nullLog, warn: nullLog
 setLogger(); // actually initialize the singleton on initial import
 
 export { createClient, setLogger, logger };
-export type DragonchainClient = typeof Client;
+export * from './interfaces/DragonchainClientInterfaces';
+export type DragonchainClient = Client;
