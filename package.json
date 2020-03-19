@@ -1,6 +1,6 @@
 {
   "name": "dragonchain-sdk",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "Dragonchain SDK for Node.JS and the Browser",
   "license": "Apache-2.0",
   "homepage": "https://github.com/dragonchain/dragonchain-sdk-javascript#readme",
@@ -80,25 +80,25 @@
     "tslib": "^1.11.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.10",
+    "@types/chai": "^4.2.11",
     "@types/ini": "^1.3.30",
     "@types/mocha": "^7.0.2",
-    "@types/node": "^13.9.0",
+    "@types/node": "^13.9.2",
     "@types/node-fetch": "^2.5.5",
     "@types/sinon": "^7.5.2",
     "@types/sinon-chai": "^3.2.3",
-    "@typescript-eslint/eslint-plugin": "^2.23.0",
-    "@typescript-eslint/parser": "^2.23.0",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "^2.24.0",
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
-    "mocha": "^7.1.0",
+    "mocha": "^7.1.1",
     "nyc": "^15.0.0",
     "prettier": "^1.19.1",
     "sinon": "^9.0.1",
     "sinon-chai": "^3.5.0",
-    "ts-node": "^8.6.2",
-    "typedoc": "^0.16.11",
+    "ts-node": "^8.7.0",
+    "typedoc": "^0.17.1",
     "typescript": "^3.8.3"
   }
 }
