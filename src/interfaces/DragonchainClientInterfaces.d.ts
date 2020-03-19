@@ -141,9 +141,9 @@ export interface L1DragonchainTransactionFull {
     invoker: string;
   };
   /**
-   * String of payload data for this transaction
+   * Payload data for this transaction
    */
-  payload: string;
+  payload: any;
   proof: {
     /**
      * hash of the full transaction

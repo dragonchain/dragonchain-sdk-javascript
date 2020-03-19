@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.3.2
+
+- **Bug Fix:**
+  - Fix type for Dragonchain L1 Transaction Payloads
+- **Development:**
+  - Update dependencies
+
 ## 4.3.1
 
 - **Bug Fix:**
