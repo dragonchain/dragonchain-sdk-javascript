@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.3.3
+
+- **Bug Fix:**
+  - Fix type exports
+
 ## 4.3.2
 
 - **Bug Fix:**
