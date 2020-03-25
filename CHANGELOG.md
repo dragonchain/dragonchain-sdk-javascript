@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.4
+
+- **Development:**
+  - Update prettier formatter to v2
+  - Update dependencies
+
 ## 4.3.3
 
 - **Bug Fix:**

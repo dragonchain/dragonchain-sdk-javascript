@@ -132,7 +132,7 @@ describe('ConfigClient', () => {
         return {
           json: () => {
             return { url: 'test' };
-          }
+          },
         };
       };
       expect(await ConfigClient.getEndpointFromRemote('id', { fetch: fakeFetch })).to.equal('test');
@@ -143,7 +143,7 @@ describe('ConfigClient', () => {
         return {
           json: () => {
             return { notUrl: 'test' };
-          }
+          },
         };
       };
       try {
