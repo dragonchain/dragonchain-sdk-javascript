@@ -56,7 +56,7 @@ import {
   CustomNumberFieldOptions,
   CustomTagFieldOptions,
   SmartContractLogs,
-  PermissionsDocument
+  PermissionsDocument,
 } from '../../interfaces/DragonchainClientInterfaces';
 import { CredentialService, HmacAlgorithm } from '../credential-service/CredentialService';
 import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
@@ -259,7 +259,7 @@ export class DragonchainClient {
     const transactionBody = {
       version: '1',
       txn_type: options.transactionType,
-      payload: options.payload
+      payload: options.payload,
     } as any;
     if (options.tag) transactionBody.tag = options.tag;
     return (await this.post('/v1/transaction', transactionBody, options.callbackURL)) as Response<DragonchainTransactionCreateResponse>;
@@ -271,11 +271,11 @@ export class DragonchainClient {
   public createBulkTransaction = async (options: { transactionList: BulkTransactionPayload[] }) => {
     if (!options.transactionList) throw new FailureByDesign('PARAM_ERROR', 'parameter `transactionList` is required');
     const bulkTransactionBody: any[] = [];
-    options.transactionList.forEach(transaction => {
+    options.transactionList.forEach((transaction) => {
       const singleBody: any = {
         version: '1',
         txn_type: transaction.transactionType,
-        payload: transaction.payload || ''
+        payload: transaction.payload || '',
       };
       if (transaction.tag) singleBody.tag = transaction.tag;
       bulkTransactionBody.push(singleBody);
@@ -347,7 +347,7 @@ export class DragonchainClient {
       transaction_type: options.transactionType,
       q: options.redisearchQuery,
       offset: options.offset || 0,
-      limit: options.limit || 10
+      limit: options.limit || 10,
     };
     if (options.verbatim !== undefined) queryParams.verbatim = options.verbatim;
     if (options.idsOnly !== undefined) queryParams.id_only = options.idsOnly;
@@ -423,7 +423,7 @@ export class DragonchainClient {
     const queryParams: any = {
       q: options.redisearchQuery,
       offset: options.offset || 0,
-      limit: options.limit || 10
+      limit: options.limit || 10,
     };
     if (options.idsOnly !== undefined) queryParams.id_only = options.idsOnly;
     if (options.sortBy !== undefined) {
@@ -526,7 +526,7 @@ export class DragonchainClient {
       txn_type: options.transactionType,
       image: options.image,
       execution_order: 'parallel', // default execution order
-      cmd: options.cmd
+      cmd: options.cmd,
     };
     if (options.args) body.args = options.args;
     if (options.executionOrder) body.execution_order = options.executionOrder;
@@ -632,7 +632,7 @@ export class DragonchainClient {
     if (options.scheduleIntervalInSeconds && options.cronExpression)
       throw new FailureByDesign('PARAM_ERROR', 'Parameters `scheduleIntervalInSeconds` and `cronExpression` are mutually exclusive');
     const body: any = {
-      version: '3'
+      version: '3',
     };
     if (options.image) body.image = options.image;
     if (options.cmd) body.cmd = options.cmd;
@@ -822,7 +822,7 @@ export class DragonchainClient {
     if (!options.transactionType) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionType` is required');
     const body: any = {
       version: '2',
-      txn_type: options.transactionType
+      txn_type: options.transactionType,
     };
     if (options.customIndexFields) body.custom_indexes = this.validateAndBuildCustomIndexFieldsArray(options.customIndexFields);
     return (await this.post('/v1/transaction-type', body)) as Response<SimpleResponse>;
@@ -976,10 +976,10 @@ export class DragonchainClient {
     if (options.changeAddress) body.change = options.changeAddress;
     if (options.outputs) {
       body.outputs = [];
-      options.outputs.forEach(output => {
+      options.outputs.forEach((output) => {
         body.outputs.push({
           to: output.to,
-          value: output.value
+          value: output.value,
         });
       });
     }
@@ -1087,7 +1087,7 @@ export class DragonchainClient {
     const body: any = {
       version: '1',
       to: options.to,
-      value: options.value
+      value: options.value,
     };
     if (options.data) body.data = options.data;
     if (options.gasPrice) body.gasPrice = options.gasPrice;
@@ -1210,7 +1210,7 @@ export class DragonchainClient {
     const body: any = {
       version: '1',
       amount: options.amount,
-      to_address: options.toAddress
+      to_address: options.toAddress,
     };
     if (options.symbol) body.symbol = options.symbol;
     if (options.memo) body.memo = options.memo;
@@ -1284,7 +1284,7 @@ export class DragonchainClient {
     const body: any = {
       version: '1',
       blockchain: options.blockchain,
-      name: options.name
+      name: options.name,
     };
     return (await this.post(`/v1/interchains/default`, body)) as Response<EthereumInterchainNetwork | BitcoinInterchainNetwork>;
   };
@@ -1320,7 +1320,7 @@ export class DragonchainClient {
       version: '1',
       blockchain: options.blockchain,
       name: options.name,
-      signed_txn: options.signedTransaction
+      signed_txn: options.signedTransaction,
     };
     return (await this.post('/v1/interchains/transaction/publish', body)) as Response<PublishedInterchainTransaction>;
   };
@@ -1371,17 +1371,17 @@ export class DragonchainClient {
     if (options.satoshisPerByte && !Number.isInteger(options.satoshisPerByte)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `satoshisPerByte` must be an integer');
     const body: any = {
       network: options.network,
-      transaction: {}
+      transaction: {},
     };
     if (options.satoshisPerByte) body.transaction.fee = options.satoshisPerByte;
     if (options.data) body.transaction.data = options.data;
     if (options.changeAddress) body.transaction.change = options.changeAddress;
     if (options.outputs) {
       body.transaction.outputs = [];
-      options.outputs.forEach(output => {
+      options.outputs.forEach((output) => {
         body.transaction.outputs.push({
           to: output.to,
-          value: output.value
+          value: output.value,
         });
       });
     }
@@ -1428,8 +1428,8 @@ export class DragonchainClient {
       network: options.network,
       transaction: {
         to: options.to,
-        value: options.value
-      }
+        value: options.value,
+      },
     };
     if (options.data) body.transaction.data = options.data;
     if (options.gasPrice) body.transaction.gasPrice = options.gasPrice;
@@ -1487,11 +1487,11 @@ export class DragonchainClient {
    */
   private validateAndBuildCustomIndexFieldsArray = (customIndexFields: TransactionTypeCustomIndex[]) => {
     const returnList: any[] = [];
-    customIndexFields.forEach(customIndexField => {
+    customIndexFields.forEach((customIndexField) => {
       const customTransactionFieldBody: any = {
         path: customIndexField.path,
         field_name: customIndexField.fieldName,
-        type: customIndexField.type
+        type: customIndexField.type,
       };
       if (customIndexField.options) {
         const optionsBody: any = {};
@@ -1531,8 +1531,8 @@ export class DragonchainClient {
       headers: {
         dragonchain: this.credentialService.dragonchainId,
         Authorization: this.credentialService.getAuthorizationHeader(method, path, timestamp, contentType, body || ''),
-        timestamp
-      }
+        timestamp,
+      },
     };
     if (contentType) options.headers['Content-Type'] = contentType;
     if (callbackURL) options.headers['X-Callback-URL'] = callbackURL;

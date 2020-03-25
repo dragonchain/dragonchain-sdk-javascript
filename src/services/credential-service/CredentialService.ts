@@ -71,10 +71,7 @@ export class CredentialService {
    */
   private static getHmacMessageString = (method: string, path: string, dragonchainId: string, timestamp: string, contentType: string, body: string, hmacAlgo: HmacAlgorithm) => {
     const binaryBody = Buffer.from(body || '', 'utf-8');
-    const hashedBase64Content = crypto
-      .createHash(hmacAlgo)
-      .update(binaryBody)
-      .digest('base64');
+    const hashedBase64Content = crypto.createHash(hmacAlgo).update(binaryBody).digest('base64');
     return [method.toUpperCase(), path, dragonchainId, timestamp, contentType, hashedBase64Content].join('\n');
   };
 }

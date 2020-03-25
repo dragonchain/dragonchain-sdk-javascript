@@ -122,7 +122,7 @@ const getCredsFromFile = async (dragonchainId: string, injected: any = { readFil
   if (!auth_key || !auth_key_id) return false;
   return {
     authKey: auth_key,
-    authKeyId: auth_key_id
+    authKeyId: auth_key_id,
   };
 };
 
@@ -230,5 +230,5 @@ export {
   getEndpointFromFile,
   getCredsFromFile,
   getEndpointFromRemote,
-  getCredsAsSmartContract
+  getCredsAsSmartContract,
 };

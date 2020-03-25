@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.3.4
+
+- **Development:**
+  - Drop support for node 8
+  - Update prettier formatter to v2
+  - Update dependencies
+
 ## 4.3.3
 
 - **Bug Fix:**

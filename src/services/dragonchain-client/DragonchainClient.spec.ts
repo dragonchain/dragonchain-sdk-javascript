@@ -63,8 +63,8 @@ describe('DragonchainClient', () => {
         headers: {
           dragonchain: 'fakeDragonchainId',
           Authorization: 'fakeCreds',
-          timestamp: fakeTime
-        }
+          timestamp: fakeTime,
+        },
       };
     });
 
@@ -154,7 +154,7 @@ describe('DragonchainClient', () => {
           offset: 1,
           idsOnly: false,
           sortAscending: false,
-          sortBy: 'whatever'
+          sortBy: 'whatever',
         });
         assert.calledWith(
           fetch,
@@ -166,7 +166,7 @@ describe('DragonchainClient', () => {
       it('defaults offset and limit', async () => {
         await client.queryTransactions({
           transactionType: 'test',
-          redisearchQuery: 'yeah'
+          redisearchQuery: 'yeah',
         });
         assert.calledWith(fetch, 'fakeUrl/v1/transaction?transaction_type=test&q=yeah&offset=0&limit=10', expectedFetchOptions);
       });
@@ -180,7 +180,7 @@ describe('DragonchainClient', () => {
 
       it('defaults offset and limit', async () => {
         await client.queryBlocks({
-          redisearchQuery: 'yeah'
+          redisearchQuery: 'yeah',
         });
         assert.calledWith(fetch, 'fakeUrl/v1/block?q=yeah&offset=0&limit=10', expectedFetchOptions);
       });
@@ -241,9 +241,9 @@ describe('DragonchainClient', () => {
       headers: {
         dragonchain: 'fakeDragonchainId',
         Authorization: 'fakeCreds',
-        timestamp: fakeTime
+        timestamp: fakeTime,
       },
-      body: undefined
+      body: undefined,
     };
 
     describe('.deleteSmartContract', () => {
@@ -291,8 +291,8 @@ describe('DragonchainClient', () => {
         'Content-Type': 'application/json',
         dragonchain: 'fakeDragonchainId',
         Authorization: 'fakeCreds',
-        timestamp: fakeTime
-      }
+        timestamp: fakeTime,
+      },
     };
 
     describe('.createApiKey', () => {
@@ -308,13 +308,13 @@ describe('DragonchainClient', () => {
         const transactionCreatePayload = {
           transactionType: 'transaction',
           payload: 'hi!',
-          tag: 'Awesome!'
+          tag: 'Awesome!',
         };
         const expectedBody = {
           version: '1',
           txn_type: transactionCreatePayload.transactionType,
           payload: transactionCreatePayload.payload,
-          tag: transactionCreatePayload.tag
+          tag: transactionCreatePayload.tag,
         };
         await client.createTransaction(transactionCreatePayload);
         const obj = { ...expectedFetchOptions, body: JSON.stringify(expectedBody) };
@@ -335,14 +335,14 @@ describe('DragonchainClient', () => {
               options: {
                 no_index: false,
                 weight: 0.5,
-                sortable: true
-              }
-            }
-          ]
+                sortable: true,
+              },
+            },
+          ],
         };
         await client.createTransactionType({
           transactionType: 'testing',
-          customIndexFields: [{ path: 'testPath', fieldName: 'someField', type: 'text', options: { noIndex: false, sortable: true, weight: 0.5 } }]
+          customIndexFields: [{ path: 'testPath', fieldName: 'someField', type: 'text', options: { noIndex: false, sortable: true, weight: 0.5 } }],
         });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(expectedBody) };
         assert.calledWith(fetch, 'fakeUrl/v1/transaction-type', obj);
@@ -356,7 +356,7 @@ describe('DragonchainClient', () => {
           image: 'ubuntu:latest',
           environmentVariables: { banana: 'banana', apple: 'banana' },
           cmd: 'banana',
-          args: ['-m', 'cool']
+          args: ['-m', 'cool'],
         };
         const expectedBody = {
           version: '3',
@@ -365,7 +365,7 @@ describe('DragonchainClient', () => {
           execution_order: 'parallel',
           cmd: contractPayload.cmd,
           args: contractPayload.args,
-          env: contractPayload.environmentVariables
+          env: contractPayload.environmentVariables,
         };
         await client.createSmartContract(contractPayload);
         const obj = { ...expectedFetchOptions, body: JSON.stringify(expectedBody) };
@@ -381,7 +381,7 @@ describe('DragonchainClient', () => {
           value: '0x0',
           data: '0x111',
           gasPrice: '0x222',
-          gas: '0x333'
+          gas: '0x333',
         };
         const expectedBody = {
           network: transactionCreatePayload.network,
@@ -390,8 +390,8 @@ describe('DragonchainClient', () => {
             value: transactionCreatePayload.value,
             data: transactionCreatePayload.data,
             gasPrice: transactionCreatePayload.gasPrice,
-            gas: transactionCreatePayload.gas
-          }
+            gas: transactionCreatePayload.gas,
+          },
         };
         await client.createEthereumTransaction(transactionCreatePayload);
         const obj = { ...expectedFetchOptions, body: JSON.stringify(expectedBody) };
@@ -408,7 +408,7 @@ describe('DragonchainClient', () => {
           private_key: 'abcd',
           rpc_address: 'some rpc',
           rpc_authorization: 'some auth',
-          utxo_scan: false
+          utxo_scan: false,
         };
         await client.createBitcoinInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', rpcAddress: 'some rpc', rpcAuthorization: 'some auth', utxoScan: false });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -423,7 +423,7 @@ describe('DragonchainClient', () => {
           name: 'banana',
           private_key: 'private key',
           rpc_address: 'some rpc',
-          chain_id: 12
+          chain_id: 12,
         };
         await client.createEthereumInterchain({ name: 'banana', privateKey: 'private key', rpcAddress: 'some rpc', chainId: 12 });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -440,7 +440,7 @@ describe('DragonchainClient', () => {
           private_key: 'abcd',
           node_url: 'some IP',
           rpc_port: 1234,
-          api_port: 5678
+          api_port: 5678,
         };
         await client.createBinanceInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', nodeURL: 'some IP', rpcPort: 1234, apiPort: 5678 });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -455,7 +455,7 @@ describe('DragonchainClient', () => {
           fee: 4,
           data: 'someData',
           change: 'change address',
-          outputs: [{ to: 'toaddr', value: 1.234 }]
+          outputs: [{ to: 'toaddr', value: 1.234 }],
         };
         await client.signBitcoinTransaction({ name: 'banana', satoshisPerByte: 4, data: 'someData', changeAddress: 'change address', outputs: [{ to: 'toaddr', value: 1.234 }] });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -472,7 +472,7 @@ describe('DragonchainClient', () => {
           data: 'someData',
           gasPrice: 'gas price',
           gas: 'gas',
-          nonce: 'nonce'
+          nonce: 'nonce',
         };
         await client.signEthereumTransaction({ name: 'banana', to: 'some addr', value: 'some value', data: 'someData', gasPrice: 'gas price', gas: 'gas', nonce: 'nonce' });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -487,7 +487,7 @@ describe('DragonchainClient', () => {
           amount: 123,
           to_address: 'receiver addy',
           symbol: 'TOKEN',
-          memo: 'for bananas'
+          memo: 'for bananas',
         };
         await client.signBinanceTransaction({ name: 'banana', amount: 123, toAddress: 'receiver addy', symbol: 'TOKEN', memo: 'for bananas' });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -500,7 +500,7 @@ describe('DragonchainClient', () => {
         const fakeBody: any = {
           version: '1',
           blockchain: 'bitcoin',
-          name: 'banana'
+          name: 'banana',
         };
         await client.setDefaultInterchainNetwork({ name: 'banana', blockchain: 'bitcoin' });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -514,7 +514,7 @@ describe('DragonchainClient', () => {
           version: '1',
           blockchain: 'bitcoin',
           name: 'banana',
-          signed_txn: 'banana'
+          signed_txn: 'banana',
         };
         await client.publishInterchainTransaction({ name: 'banana', blockchain: 'bitcoin', signedTransaction: 'banana' });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -539,8 +539,8 @@ describe('DragonchainClient', () => {
         'Content-Type': 'application/json',
         dragonchain: 'fakeDragonchainId',
         Authorization: 'fakeCreds',
-        timestamp: fakeTime
-      }
+        timestamp: fakeTime,
+      },
     };
 
     describe('.updateApiKey', () => {
@@ -557,7 +557,7 @@ describe('DragonchainClient', () => {
         const status = 'active';
         const fakeBodyResponse: any = {
           version: '3',
-          desired_state: status
+          desired_state: status,
         };
         await client.updateSmartContract({ smartContractId, enabled: true });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBodyResponse) };
@@ -582,8 +582,8 @@ describe('DragonchainClient', () => {
         'Content-Type': 'application/json',
         dragonchain: 'fakeDragonchainId',
         Authorization: 'fakeCreds',
-        timestamp: fakeTime
-      }
+        timestamp: fakeTime,
+      },
     };
 
     describe('.updateBitcoinInterchain', () => {
@@ -594,7 +594,7 @@ describe('DragonchainClient', () => {
           private_key: 'abcd',
           rpc_address: 'some rpc',
           rpc_authorization: 'some auth',
-          utxo_scan: false
+          utxo_scan: false,
         };
         await client.updateBitcoinInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', rpcAddress: 'some rpc', rpcAuthorization: 'some auth', utxoScan: false });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -608,7 +608,7 @@ describe('DragonchainClient', () => {
           version: '1',
           private_key: 'abcd',
           rpc_address: 'some rpc',
-          chain_id: 12
+          chain_id: 12,
         };
         await client.updateEthereumInterchain({ name: 'banana', privateKey: 'abcd', rpcAddress: 'some rpc', chainId: 12 });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
@@ -624,7 +624,7 @@ describe('DragonchainClient', () => {
           private_key: 'abcd',
           node_url: 'some IP',
           rpc_port: 1234,
-          api_port: 5678
+          api_port: 5678,
         };
         await client.updateBinanceInterchain({ name: 'banana', testnet: true, privateKey: 'abcd', nodeURL: 'some IP', rpcPort: 1234, apiPort: 5678 });
         const obj = { ...expectedFetchOptions, body: JSON.stringify(fakeBody) };
