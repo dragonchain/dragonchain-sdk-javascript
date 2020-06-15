@@ -57,6 +57,8 @@ import {
   CustomTagFieldOptions,
   SmartContractLogs,
   PermissionsDocument,
+  DiviTransactionOutputs,
+  DiviInterchainNetwork,
 } from '../../interfaces/DragonchainClientInterfaces';
 import { CredentialService, HmacAlgorithm } from '../credential-service/CredentialService';
 import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
@@ -167,6 +169,7 @@ export class DragonchainClient {
     const body: any = {};
     if (options.nickname) body['nickname'] = options.nickname;
     if (options.permissionsDocument) body['permissions_document'] = options.permissionsDocument;
+    console.log(body);
     return (await this.post('/v1/api-key', body)) as Response<CreateAPIKeyResponse>;
   };
 
@@ -984,6 +987,131 @@ export class DragonchainClient {
       });
     }
     return (await this.post(`/v1/interchains/bitcoin/${options.name}/transaction`, body)) as Response<PublicBlockchainTransactionResponse>;
+  };
+
+    /**
+   * Create (or overwrite) a divi wallet/network for interchain use
+   */
+  public createDiviInterchain = async (options: {
+    /**
+     * The name of the network to update
+     */
+    name: string;
+    /**
+     * Whether or not this is a testnet wallet/address (not required if providing privateKey as WIF)
+     */
+    testnet?: boolean;
+    /**
+     * The base64 encoded private key, or WIF for the desired wallet
+     */
+    privateKey?: string;
+    /**
+     * The endpoint of the bitcoin core RPC node to use (i.e. http://my-node:8332)
+     */
+    rpcAddress?: string;
+    /**
+     * The base64-encoded username:password for the rpc node. For example, user: a pass: b would be 'YTpi' (base64("a:b"))
+     */
+    rpcAuthorization?: string;
+    /**
+     * Whether or not to force a utxo-rescan for the address.
+     * If using a new private key for an existing wallet with funds, this must be true to use its existing funds
+     */
+    utxoScan?: boolean;
+  }) => {
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    const body: any = { version: '1', name: options.name };
+    if (typeof options.testnet === 'boolean') body.testnet = options.testnet;
+    if (options.privateKey) body.private_key = options.privateKey;
+    if (options.rpcAddress) body.rpc_address = options.rpcAddress;
+    if (options.rpcAuthorization) body.rpc_authorization = options.rpcAuthorization;
+    if (typeof options.utxoScan === 'boolean') body.utxo_scan = options.utxoScan;
+    return (await this.post(`/v1/interchains/divi`, body)) as Response<BitcoinInterchainNetwork>;
+  };
+
+  /**
+   * Update an existing divi wallet/network for interchain use. Will only update the provided fields
+   */
+  public updateDiviInterchain = async (options: {
+    /**
+     * The name of the network to update
+     */
+    name: string;
+    /**
+     * Whether or not this is a testnet wallet/address (not required if providing privateKey as WIF)
+     */
+    testnet?: boolean;
+    /**
+     * The base64 encoded private key, or WIF for the desired wallet
+     */
+    privateKey?: string;
+    /**
+     * The endpoint of the bitcoin core RPC node to use (i.e. http://my-node:8332)
+     */
+    rpcAddress?: string;
+    /**
+     * The base64-encoded username:password for the rpc node. For example, user: a pass: b would be 'YTpi' (base64("a:b"))
+     */
+    rpcAuthorization?: string;
+    /**
+     * Whether or not to force a utxo-rescan for the address.
+     * If using a new private key for an existing wallet with funds, this must be true to use its existing funds
+     */
+    utxoScan?: boolean;
+  }) => {
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    const body: any = { version: '1' };
+    if (typeof options.testnet === 'boolean') body.testnet = options.testnet;
+    if (options.privateKey) body.private_key = options.privateKey;
+    if (options.rpcAddress) body.rpc_address = options.rpcAddress;
+    if (options.rpcAuthorization) body.rpc_authorization = options.rpcAuthorization;
+    if (typeof options.utxoScan === 'boolean') body.utxo_scan = options.utxoScan;
+    return (await this.patch(`/v1/interchains/divi/${options.name}`, body)) as Response<DiviInterchainNetwork>;
+  };
+
+  /**
+   * Sign a transaction for a divi network on the chain
+   */
+  public signDiviTransaction = async (options: {
+    /**
+     * The name of the divi network to use for signing
+     */
+    name: string;
+    /**
+     * The desired fee in satoshis/byte. Must be an integer
+     *
+     * If not supplied, an estimate will be automatically generated
+     */
+    satoshisPerByte?: number;
+    /**
+     * String data to embed in the transaction as null-data output type
+     */
+    data?: string;
+    /**
+     * Change address to use for this transaction. If not supplied, this will be the source address
+     */
+    changeAddress?: string;
+    /**
+     * The desired divi outputs to create for this transaction
+     */
+    outputs?: DiviTransactionOutputs[];
+  }) => {
+    if (!options.name) throw new FailureByDesign('PARAM_ERROR', 'Parameter `name` is required');
+    if (options.satoshisPerByte && !Number.isInteger(options.satoshisPerByte)) throw new FailureByDesign('PARAM_ERROR', 'Parameter `satoshisPerByte` must be an integer');
+    const body: any = { version: '1' };
+    if (options.satoshisPerByte) body.fee = options.satoshisPerByte;
+    if (options.data) body.data = options.data;
+    if (options.changeAddress) body.change = options.changeAddress;
+    if (options.outputs) {
+      body.outputs = [];
+      options.outputs.forEach((output) => {
+        body.outputs.push({
+          to: output.to,
+          value: output.value,
+        });
+      });
+    }
+    return (await this.post(`/v1/interchains/divi/${options.name}/transaction`, body)) as Response<PublicBlockchainTransactionResponse>;
   };
 
   /**

@@ -207,6 +207,11 @@ export interface BitcoinTransactionOutputs {
   value: number;
 }
 
+export interface DiviTransactionOutputs {
+  to: string;
+  value: number;
+}
+
 /**
  * Example response for signEthereumTransaction
  * @example
@@ -263,6 +268,29 @@ export interface EthereumInterchainNetwork {
 export interface BitcoinInterchainNetwork {
   version: string;
   blockchain: 'bitcoin';
+  name: string;
+  rpc_address: string;
+  testnet: boolean;
+  address: string;
+}
+
+/**
+ * @example
+ * ```json
+ *
+ * {
+ *   "version": "1",
+ *   "blockchain": "divi",
+ *   "name": "myBTCTestNetwork",
+ *   "rpc_address": "http://1.2.3.4:18332",
+ *   "testnet": true,
+ *   "address": "n1bUzF6LRENLPaiJRFTcnGLMLsbZSquft1"
+ * }
+ * ```
+ */
+export interface DiviInterchainNetwork {
+  version: string;
+  blockchain: 'divi';
   name: string;
   rpc_address: string;
   testnet: boolean;
