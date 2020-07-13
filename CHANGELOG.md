@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.3.5
+
+- **Development:**
+  - Add in getEternalReport method
+
 ## 4.3.4
 
 - **Development:**
