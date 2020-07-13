@@ -57,6 +57,7 @@ import {
   CustomTagFieldOptions,
   SmartContractLogs,
   PermissionsDocument,
+  EternalReportV1,
 } from '../../interfaces/DragonchainClientInterfaces';
 import { CredentialService, HmacAlgorithm } from '../credential-service/CredentialService';
 import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
@@ -1435,6 +1436,32 @@ export class DragonchainClient {
     if (options.gasPrice) body.transaction.gasPrice = options.gasPrice;
     if (options.gas) body.transaction.gas = options.gas;
     return (await this.post('/v1/public-blockchain-transaction', body)) as Response<PublicBlockchainTransactionResponse>;
+  };
+
+  /**
+   * Get/Generate an Eternal-type report given a transaction ID
+   */
+  public getEternalReport = async (options: {
+    /**
+     * the transaction ID of the transaction to generate report for
+     */
+    transactionId: string;
+  }) => {
+    if (!options.transactionId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionId` is required');
+    const transaction = await this.getTransaction({ transactionId: options.transactionId });
+    if (transaction && !transaction.ok) throw new FailureByDesign('NOT_FOUND', 'transaction not found');
+    const blockId = transaction.response.header.block_id;
+    const block = await this.getBlock({ blockId });
+    if (block && !block.ok) throw new FailureByDesign('NOT_FOUND', 'block not found');
+    const verifications = await this.getVerifications({ blockId });
+    return {
+      l1Transaction: transaction.response,
+      l1Block: block.response,
+      l2Verifications: verifications.response && verifications.response['2'],
+      l3Verifications: verifications.response && verifications.response['3'],
+      l4Verifications: verifications.response && verifications.response['4'],
+      l5Verifications: verifications.response && verifications.response['5'],
+    } as EternalReportV1;
   };
 
   /**
