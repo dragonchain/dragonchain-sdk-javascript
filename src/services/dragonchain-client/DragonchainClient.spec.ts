@@ -68,6 +68,13 @@ describe('DragonchainClient', () => {
       };
     });
 
+    describe('.queryInterchainTransactions', () => {
+      it('calls #fetch() with correct params', async () => {
+        await client.queryInterchainTransactions({ blockId: '123456789' });
+        assert.calledWith(fetch, 'fakeUrl/v1/verifications/interchains/123456789', expectedFetchOptions);
+      });
+    });
+
     describe('.getSmartContractSecret', () => {
       it('calls readFileAsync with correct dragonchain id and secret name', async () => {
         process.env.SMART_CONTRACT_ID = 'fakeSmartContractId';

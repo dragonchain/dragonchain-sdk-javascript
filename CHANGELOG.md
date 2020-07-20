@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.4.0
+
+- **Feature:**
+  - Add support for querying subsequent interchain verifications
+
 ## 4.3.4
 
 - **Development:**

@@ -57,6 +57,7 @@ import {
   CustomTagFieldOptions,
   SmartContractLogs,
   PermissionsDocument,
+  L5BlockAtRest,
 } from '../../interfaces/DragonchainClientInterfaces';
 import { CredentialService, HmacAlgorithm } from '../credential-service/CredentialService';
 import { getDragonchainId, getDragonchainEndpoint } from '../config-service';
@@ -1435,6 +1436,19 @@ export class DragonchainClient {
     if (options.gasPrice) body.transaction.gasPrice = options.gasPrice;
     if (options.gas) body.transaction.gas = options.gas;
     return (await this.post('/v1/public-blockchain-transaction', body)) as Response<PublicBlockchainTransactionResponse>;
+  };
+
+  /**
+   * Query the Dragonchain for the subsequent interchain (L5) transactions
+   */
+  public queryInterchainTransactions = async (options: {
+    /**
+     * L1 block ID
+     */
+    blockId: string;
+  }) => {
+    if (!options.blockId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `blockId` is required');
+    return (await this.get(`/v1/verifications/interchains/${options.blockId}`)) as Response<L5BlockAtRest[]>;
   };
 
   /**
