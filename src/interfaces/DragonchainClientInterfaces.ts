@@ -1233,6 +1233,7 @@ export interface PermissionsDocument {
       allow_delete?: boolean;
       get_verifications?: PermissionsDocumentDefaultEndpoint;
       get_pending_verifications?: PermissionsDocumentDefaultEndpoint;
+      query_interchain_transactions?: PermissionsDocumentDefaultEndpoint;
     };
   };
 }
