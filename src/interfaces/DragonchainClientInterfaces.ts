@@ -783,7 +783,7 @@ export interface L2BlockAtRest {
   dcrn: 'Block::L2::AtRest';
   header: {
     dc_id: string;
-    current_ddds: string | null;
+    current_ddss: string | null;
     level: 2;
     block_id: string;
     timestamp: string;
