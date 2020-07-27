@@ -1463,10 +1463,10 @@ export class DragonchainClient {
   }) => {
     if (!options.transactionId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionId` is required');
     const transaction = await this.getTransaction({ transactionId: options.transactionId });
-    if (transaction && !transaction.ok) throw new FailureByDesign('NOT_FOUND', 'transaction not found');
+    if (transaction && !transaction.ok) return { ok: false, status: transaction.status, response: transaction.response };
     const blockId = transaction.response.header.block_id;
     const block = await this.getBlock({ blockId });
-    if (block && !block.ok) throw new FailureByDesign('NOT_FOUND', 'block not found');
+    if (block && !block.ok) return { ok: false, status: block.status, response: block.response };
     const verifications = await this.getVerifications({ blockId });
     const l5verifications = await this.queryInterchainTransactions({ blockId });
     return {
