@@ -13,67 +13,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  * @hidden
  * Supported HTTP methods for the sdk
  */
-export type SupportedHTTP = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-
+export declare type SupportedHTTP = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 /**
  * @hidden
  * Fetch options used internally
  */
 export interface FetchOptions {
-  method: SupportedHTTP;
-  headers: {
-    'Content-Type'?: string;
-    'X-Callback-URL'?: string;
-    dragonchain: string;
-    timestamp: string;
-    Authorization: string;
-  };
-  body: string | undefined;
-  credentials?: string;
+    method: SupportedHTTP;
+    headers: {
+        'Content-Type'?: string;
+        'X-Callback-URL'?: string;
+        dragonchain: string;
+        timestamp: string;
+        Authorization: string;
+    };
+    body: string | undefined;
+    credentials?: string;
 }
-
 /**
  * Response returned from a `DragonchainClient` call to a dragonchain
  */
 export interface Response<T> {
-  /**
-   * Boolean result if the response from the dragonchain was a 2XX status code, indicating a successful call
-   */
-  ok: boolean;
-  /**
-   * HTTP status code returned from this call
-   */
-  status: number;
-  /**
-   * Responses from Dragonchain will return here.
-   *
-   * Check the docs for the specific function you are calling to see what will appear here.
-   */
-  response: T;
+    /**
+     * Boolean result if the response from the dragonchain was a 2XX status code, indicating a successful call
+     */
+    ok: boolean;
+    /**
+     * HTTP status code returned from this call
+     */
+    status: number;
+    /**
+     * Responses from Dragonchain will return here.
+     *
+     * Check the docs for the specific function you are calling to see what will appear here.
+     */
+    response: T;
 }
-
 /**
  * Data returned from a query against a chain
  */
 export interface QueryResult<T> {
-  /**
-   * Array of results
-   */
-  results: T[];
-  /**
-   * Total count of results that match the query
-   *
-   * Note this number can be higher than the length of the `results` array,
-   * indicating that pagination was used to shorten the `results` returned
-   */
-  total: number;
+    /**
+     * Array of results
+     */
+    results: T[];
+    /**
+     * Total count of results that match the query
+     *
+     * Note this number can be higher than the length of the `results` array,
+     * indicating that pagination was used to shorten the `results` returned
+     */
+    total: number;
 }
-
 /**
  * Example Transaction At Rest Object
  * @name Transaction::L1::FullTransaction
@@ -101,61 +96,60 @@ export interface QueryResult<T> {
  * ```
  */
 export interface L1DragonchainTransactionFull {
-  /**
-   * string representing this Dragonchain Resource Name
-   */
-  dcrn: 'Transaction::L1::FullTransaction';
-  /**
-   * string representing the version of this DataTransferObject
-   */
-  version: string;
-  header: {
     /**
-     * name of a smart contract, or 'transaction'
+     * string representing this Dragonchain Resource Name
      */
-    txn_type: string;
+    dcrn: 'Transaction::L1::FullTransaction';
     /**
-     * the dragonchainId which originally received this transaction
+     * string representing the version of this DataTransferObject
      */
-    dc_id: string;
+    version: string;
+    header: {
+        /**
+         * name of a smart contract, or 'transaction'
+         */
+        txn_type: string;
+        /**
+         * the dragonchainId which originally received this transaction
+         */
+        dc_id: string;
+        /**
+         * the GUID of this transaction
+         */
+        txn_id: string;
+        /**
+         * free-form string of search searchable data submitted by the transaction author
+         */
+        tag: string;
+        /**
+         * unix timestamp of when this transaction was first processed
+         */
+        timestamp: string;
+        /**
+         * the block id to which this transaction was fixated
+         */
+        block_id: string;
+        /**
+         * the optional GUID of a smart-contract transaction which triggered this record.
+         * SC invocation requests are null here, their output will contain the transaction ID of their invokation request transaction)
+         */
+        invoker: string;
+    };
     /**
-     * the GUID of this transaction
+     * Payload data for this transaction
      */
-    txn_id: string;
-    /**
-     * free-form string of search searchable data submitted by the transaction author
-     */
-    tag: string;
-    /**
-     * unix timestamp of when this transaction was first processed
-     */
-    timestamp: string;
-    /**
-     * the block id to which this transaction was fixated
-     */
-    block_id: string;
-    /**
-     * the optional GUID of a smart-contract transaction which triggered this record.
-     * SC invocation requests are null here, their output will contain the transaction ID of their invokation request transaction)
-     */
-    invoker: string;
-  };
-  /**
-   * Payload data for this transaction
-   */
-  payload: any;
-  proof: {
-    /**
-     * hash of the full transaction
-     */
-    full: string;
-    /**
-     * signature of the stripped transaction
-     */
-    stripped: string;
-  };
+    payload: any;
+    proof: {
+        /**
+         * hash of the full transaction
+         */
+        full: string;
+        /**
+         * signature of the stripped transaction
+         */
+        stripped: string;
+    };
 }
-
 /**
  * @example
  * ```json
@@ -166,47 +160,42 @@ export interface L1DragonchainTransactionFull {
  * ```
  */
 export interface DragonchainTransactionCreateResponse {
-  transaction_id: string;
+    transaction_id: string;
 }
-
 export interface BulkTransactionPayload {
-  /**
-   * The transaction type to use for this new transaction. This transaction type must already exist on the chain (via `createTransactionType`)
-   */
-  transactionType: string;
-  /**
-   * Payload of the transaction. Must be a utf-8 encodable string, or any json object
-   */
-  payload?: string | object;
-  /**
-   * Tag of the transaction which gets indexed and can be searched on for queries
-   */
-  tag?: string;
+    /**
+     * The transaction type to use for this new transaction. This transaction type must already exist on the chain (via `createTransactionType`)
+     */
+    transactionType: string;
+    /**
+     * Payload of the transaction. Must be a utf-8 encodable string, or any json object
+     */
+    payload?: string | object;
+    /**
+     * Tag of the transaction which gets indexed and can be searched on for queries
+     */
+    tag?: string;
 }
-
 interface FailedBulkTransactionCreate {
-  version: string;
-  txn_type: string;
-  payload: string | object;
-  tag?: string;
+    version: string;
+    txn_type: string;
+    payload: string | object;
+    tag?: string;
 }
-
 export interface DragonchainBulkTransactionCreateResponse {
-  /**
-   * Successfully posted transactions
-   */
-  201: DragonchainTransactionCreateResponse[];
-  /**
-   * Transactions that failed to post
-   */
-  400: FailedBulkTransactionCreate[];
+    /**
+     * Successfully posted transactions
+     */
+    201: DragonchainTransactionCreateResponse[];
+    /**
+     * Transactions that failed to post
+     */
+    400: FailedBulkTransactionCreate[];
 }
-
 export interface BitcoinTransactionOutputs {
-  to: string;
-  value: number;
+    to: string;
+    value: number;
 }
-
 /**
  * Example response for signEthereumTransaction
  * @example
@@ -218,11 +207,9 @@ export interface BitcoinTransactionOutputs {
  * ```
  */
 export interface PublicBlockchainTransactionResponse {
-  signed: string;
+    signed: string;
 }
-
-export type SupportedInterchains = 'ethereum' | 'bitcoin' | 'binance';
-
+export declare type SupportedInterchains = 'ethereum' | 'bitcoin' | 'binance';
 /**
  * @example
  * ```json
@@ -238,14 +225,13 @@ export type SupportedInterchains = 'ethereum' | 'bitcoin' | 'binance';
  * ```
  */
 export interface EthereumInterchainNetwork {
-  version: string;
-  blockchain: 'ethereum';
-  name: string;
-  rpc_address: string;
-  chain_id: number;
-  address: string;
+    version: string;
+    blockchain: 'ethereum';
+    name: string;
+    rpc_address: string;
+    chain_id: number;
+    address: string;
 }
-
 /**
  * @example
  * ```json
@@ -261,14 +247,13 @@ export interface EthereumInterchainNetwork {
  * ```
  */
 export interface BitcoinInterchainNetwork {
-  version: string;
-  blockchain: 'bitcoin';
-  name: string;
-  rpc_address: string;
-  testnet: boolean;
-  address: string;
+    version: string;
+    blockchain: 'bitcoin';
+    name: string;
+    rpc_address: string;
+    testnet: boolean;
+    address: string;
 }
-
 /**
  * @example
  * ```json
@@ -286,15 +271,14 @@ export interface BitcoinInterchainNetwork {
  * ```
  */
 export interface BinanceInterchainNetwork {
-  version: string;
-  blockchain: 'binance';
-  name: string;
-  node_url: string;
-  rpc_port: number;
-  api_port: number;
-  address: string;
+    version: string;
+    blockchain: 'binance';
+    name: string;
+    node_url: string;
+    rpc_port: number;
+    api_port: number;
+    address: string;
 }
-
 /**
  * Array of interchains will be all of one type
  * @example
@@ -313,9 +297,8 @@ export interface BinanceInterchainNetwork {
  * ```
  */
 export interface InterchainNetworkList {
-  interchains: BitcoinInterchainNetwork[] | EthereumInterchainNetwork[] | BinanceInterchainNetwork[];
+    interchains: BitcoinInterchainNetwork[] | EthereumInterchainNetwork[] | BinanceInterchainNetwork[];
 }
-
 /**
  * Transaction hash (or equivalent) of a published interchain transaction
  * @example
@@ -327,9 +310,8 @@ export interface InterchainNetworkList {
  * ```
  */
 export interface PublishedInterchainTransaction {
-  transaction: string;
+    transaction: string;
 }
-
 /**
  * @example
  * ```json
@@ -355,14 +337,13 @@ export interface PublishedInterchainTransaction {
  * ```
  */
 export interface CreateAPIKeyResponse {
-  key: string;
-  id: string;
-  registration_time: number;
-  nickname: string;
-  root: boolean;
-  permissions_document: PermissionsDocument;
+    key: string;
+    id: string;
+    registration_time: number;
+    nickname: string;
+    root: boolean;
+    permissions_document: PermissionsDocument;
 }
-
 /**
  * @example
  * ```json
@@ -373,9 +354,8 @@ export interface CreateAPIKeyResponse {
  * ```
  */
 export interface DeleteAPIKeyResponse {
-  success: boolean;
+    success: boolean;
 }
-
 /**
  * @example
  * ```json
@@ -400,16 +380,15 @@ export interface DeleteAPIKeyResponse {
  * ```
  */
 export interface GetAPIKeyResponse {
-  id: string;
-  /**
-   * Unix timestamp (integer) when this key was created. Could be 0 if root key.
-   */
-  registration_time: number;
-  nickname: string;
-  root: boolean;
-  permissions_document: PermissionsDocument;
+    id: string;
+    /**
+     * Unix timestamp (integer) when this key was created. Could be 0 if root key.
+     */
+    registration_time: number;
+    nickname: string;
+    root: boolean;
+    permissions_document: PermissionsDocument;
 }
-
 /**
  * @example
  * ```json
@@ -432,9 +411,8 @@ export interface GetAPIKeyResponse {
  * ```
  */
 export interface ListAPIKeyResponse {
-  keys: GetAPIKeyResponse[];
+    keys: GetAPIKeyResponse[];
 }
-
 /**
  * @example
  * ```json
@@ -449,15 +427,13 @@ export interface ListAPIKeyResponse {
  * ```
  */
 export interface PublicBlockchainAddressListResponse {
-  eth_mainnet?: string;
-  etc_mainnet?: string;
-  eth_ropsten?: string;
-  btc_mainnet?: string;
-  btc_testnet3?: string;
+    eth_mainnet?: string;
+    etc_mainnet?: string;
+    eth_ropsten?: string;
+    btc_mainnet?: string;
+    btc_testnet3?: string;
 }
-
-export type SmartContractExecutionOrder = 'parallel' | 'serial';
-
+export declare type SmartContractExecutionOrder = 'parallel' | 'serial';
 /**
  * Example SmartContract At Rest Object
  * @name SmartContract::L1::AtRest
@@ -498,72 +474,71 @@ export type SmartContractExecutionOrder = 'parallel' | 'serial';
  * ```
  */
 export interface SmartContractAtRest {
-  /**
-   * string representing this Dragonchain Resource Name
-   */
-  dcrn: 'SmartContract::L1::AtRest';
-  /**
-   * string representing the version of this DataTransferObject
-   */
-  version: '3';
-  /**
-   * the name (and also transaction type to invoke) this smart contract
-   */
-  txn_type: string;
-  /**
-   * The unique guid identifier for this contract
-   */
-  id: string;
-  /**
-   * data about the current status of the smart contract
-   */
-  status: {
-    state: 'active' | 'inactive';
-    msg: string;
-    timestamp: string;
-  };
-  /**
-   * docker image of the smart contract
-   */
-  image: string;
-  /**
-   * id of the auth key that is used by the smart contract for communication back with the chain
-   */
-  auth_key_id: string | null;
-  /**
-   * docker image pull digest of the deployed smart contract
-   */
-  image_digest: string | null;
-  /**
-   * command that is run on execution of the smart contract
-   */
-  cmd: string;
-  /**
-   * args passed into the command on execution of the smart contract
-   */
-  args: string[] | null;
-  /**
-   * environment variables given to the smart contract
-   */
-  env: object | null;
-  /**
-   * array of secret names for this smart contract
-   */
-  existing_secrets: string[] | null;
-  /**
-   * cron expression for scheduling automatic execution of the smart contract
-   */
-  cron: string | null;
-  /**
-   * number of seconds between automatic executions of the smart contract
-   */
-  seconds: number | null;
-  /**
-   * execution order of the contract, whether it gets invoked asap (parallel), or in a single queue (serial)
-   */
-  execution_order: SmartContractExecutionOrder;
+    /**
+     * string representing this Dragonchain Resource Name
+     */
+    dcrn: 'SmartContract::L1::AtRest';
+    /**
+     * string representing the version of this DataTransferObject
+     */
+    version: '3';
+    /**
+     * the name (and also transaction type to invoke) this smart contract
+     */
+    txn_type: string;
+    /**
+     * The unique guid identifier for this contract
+     */
+    id: string;
+    /**
+     * data about the current status of the smart contract
+     */
+    status: {
+        state: 'active' | 'inactive';
+        msg: string;
+        timestamp: string;
+    };
+    /**
+     * docker image of the smart contract
+     */
+    image: string;
+    /**
+     * id of the auth key that is used by the smart contract for communication back with the chain
+     */
+    auth_key_id: string | null;
+    /**
+     * docker image pull digest of the deployed smart contract
+     */
+    image_digest: string | null;
+    /**
+     * command that is run on execution of the smart contract
+     */
+    cmd: string;
+    /**
+     * args passed into the command on execution of the smart contract
+     */
+    args: string[] | null;
+    /**
+     * environment variables given to the smart contract
+     */
+    env: object | null;
+    /**
+     * array of secret names for this smart contract
+     */
+    existing_secrets: string[] | null;
+    /**
+     * cron expression for scheduling automatic execution of the smart contract
+     */
+    cron: string | null;
+    /**
+     * number of seconds between automatic executions of the smart contract
+     */
+    seconds: number | null;
+    /**
+     * execution order of the contract, whether it gets invoked asap (parallel), or in a single queue (serial)
+     */
+    execution_order: SmartContractExecutionOrder;
 }
-
 /**
  * Example smart contract logs
  * @example
@@ -583,29 +558,28 @@ export interface SmartContractAtRest {
  * ```
  */
 export interface SmartContractLogs {
-  /**
-   * Array of logs
-   */
-  logs: {
     /**
-     * The name of the contract deployment
+     * Array of logs
      */
-    name: string;
-    /**
-     * The pod instance the log came from
-     */
-    instance: string;
-    /**
-     * The timestamp the log occurred at
-     */
-    timestamp: string;
-    /**
-     * The log itself
-     */
-    text: string;
-  }[];
+    logs: {
+        /**
+         * The name of the contract deployment
+         */
+        name: string;
+        /**
+         * The pod instance the log came from
+         */
+        instance: string;
+        /**
+         * The timestamp the log occurred at
+         */
+        timestamp: string;
+        /**
+         * The log itself
+         */
+        text: string;
+    }[];
 }
-
 /**
  * Example smart contract list
  * @example
@@ -647,9 +621,8 @@ export interface SmartContractLogs {
  * ```
  */
 export interface SmartContractList {
-  smart_contracts: SmartContractAtRest[];
+    smart_contracts: SmartContractAtRest[];
 }
-
 /**
  * Example of the status result
  * @example
@@ -668,40 +641,39 @@ export interface SmartContractList {
  * ```
  */
 export interface L1DragonchainStatusResult {
-  /**
-   * Public id of the dragonchain
-   */
-  id: string;
-  /**
-   * Level of this dragonchain (as an integer)
-   */
-  level: number;
-  /**
-   * URL of the chain
-   */
-  url: string;
-  /**
-   * Proof scheme that this chain uses
-   */
-  scheme: string;
-  /**
-   * Hashing algorithm used for blocks on this chain
-   */
-  hashAlgo: string;
-  /**
-   * Dragonchain version of this chain
-   */
-  version: string;
-  /**
-   * Encryption algorithm used for blocks on this chain
-   */
-  encryptionAlgo: string;
-  /**
-   * Whether or not indexing is enabled on this chain
-   */
-  indexingEnabled: boolean;
+    /**
+     * Public id of the dragonchain
+     */
+    id: string;
+    /**
+     * Level of this dragonchain (as an integer)
+     */
+    level: number;
+    /**
+     * URL of the chain
+     */
+    url: string;
+    /**
+     * Proof scheme that this chain uses
+     */
+    scheme: string;
+    /**
+     * Hashing algorithm used for blocks on this chain
+     */
+    hashAlgo: string;
+    /**
+     * Dragonchain version of this chain
+     */
+    version: string;
+    /**
+     * Encryption algorithm used for blocks on this chain
+     */
+    encryptionAlgo: string;
+    /**
+     * Whether or not indexing is enabled on this chain
+     */
+    indexingEnabled: boolean;
 }
-
 /**
  * Example L1 Block At Rest Object
  * @name Block::L1::AtRest
@@ -730,24 +702,23 @@ export interface L1DragonchainStatusResult {
  * ```
  */
 export interface L1BlockAtRest {
-  version: '1';
-  dcrn: 'Block::L1::AtRest';
-  header: {
-    dc_id: string;
-    block_id: string;
-    level: 1;
-    timestamp: string;
-    prev_id: string;
-    prev_proof: string;
-  };
-  transactions: string[];
-  proof: {
-    scheme: string;
-    proof: string;
-    nonce?: number;
-  };
+    version: '1';
+    dcrn: 'Block::L1::AtRest';
+    header: {
+        dc_id: string;
+        block_id: string;
+        level: 1;
+        timestamp: string;
+        prev_id: string;
+        prev_proof: string;
+    };
+    transactions: string[];
+    proof: {
+        scheme: string;
+        proof: string;
+        nonce?: number;
+    };
 }
-
 /**
  * Example L2 Block At Rest Object
  * @name Block::L2::AtRest
@@ -779,35 +750,33 @@ export interface L1BlockAtRest {
  * ```
  */
 export interface L2BlockAtRest {
-  version: '1';
-  dcrn: 'Block::L2::AtRest';
-  header: {
-    dc_id: string;
-    current_ddss: string | null;
-    level: 2;
-    block_id: string;
-    timestamp: string;
-    prev_proof: string;
-  };
-  validation: {
-    dc_id: string;
-    block_id: string;
-    stripped_proof: string;
-    transactions: string;
-  };
-  proof: {
-    scheme: string;
-    proof: string;
-    nonce?: number;
-  };
+    version: '1';
+    dcrn: 'Block::L2::AtRest';
+    header: {
+        dc_id: string;
+        current_ddss: string | null;
+        level: 2;
+        block_id: string;
+        timestamp: string;
+        prev_proof: string;
+    };
+    validation: {
+        dc_id: string;
+        block_id: string;
+        stripped_proof: string;
+        transactions: string;
+    };
+    proof: {
+        scheme: string;
+        proof: string;
+        nonce?: number;
+    };
 }
-
 interface L2Proofs {
-  dc_id: string;
-  block_id: string;
-  proof: string;
+    dc_id: string;
+    block_id: string;
+    proof: string;
 }
-
 /**
  * Example L3 Block At Rest Object
  * @name Block::L3::AtRest
@@ -853,40 +822,38 @@ interface L2Proofs {
  * ```
  */
 export interface L3BlockAtRest {
-  version: '2';
-  dcrn: 'Block::L3::AtRest';
-  header: {
-    dc_id: string;
-    current_ddss: string | null;
-    level: 3;
-    block_id: string;
-    timestamp: string;
-    prev_proof: string;
-  };
-  'l2-Validations': {
-    l1_dc_id: string;
-    l1_block_id: string;
-    l1_proof: string;
-    l2_proofs: L2Proofs[];
-    ddss: string;
-    count: string;
-    regions: string[];
-    clouds: string[];
-  };
-  proof: {
-    scheme: string;
-    proof: string;
-    nonce?: number;
-  };
+    version: '2';
+    dcrn: 'Block::L3::AtRest';
+    header: {
+        dc_id: string;
+        current_ddss: string | null;
+        level: 3;
+        block_id: string;
+        timestamp: string;
+        prev_proof: string;
+    };
+    'l2-Validations': {
+        l1_dc_id: string;
+        l1_block_id: string;
+        l1_proof: string;
+        l2_proofs: L2Proofs[];
+        ddss: string;
+        count: string;
+        regions: string[];
+        clouds: string[];
+    };
+    proof: {
+        scheme: string;
+        proof: string;
+        nonce?: number;
+    };
 }
-
 interface L3Validations {
-  l3_dc_id: string;
-  l3_block_id: string;
-  l3_proof: string;
-  valid: boolean;
+    l3_dc_id: string;
+    l3_block_id: string;
+    l3_proof: string;
+    valid: boolean;
 }
-
 /**
  * Example L4 Block At Rest Object
  * @name Block::L4::AtRest
@@ -923,27 +890,26 @@ interface L3Validations {
  * ```
  */
 export interface L4BlockAtRest {
-  version: '2';
-  dcrn: 'Block::L4::AtRest';
-  header: {
-    dc_id: string;
-    current_ddss: string | null;
-    level: 4;
-    block_id: string;
-    timestamp: string;
-    l1_dc_id: string;
-    l1_block_id: string;
-    l1_proof: string;
-    prev_proof: string;
-  };
-  'l3-Validations': L3Validations[];
-  proof: {
-    scheme: string;
-    proof: string;
-    nonce?: number;
-  };
+    version: '2';
+    dcrn: 'Block::L4::AtRest';
+    header: {
+        dc_id: string;
+        current_ddss: string | null;
+        level: 4;
+        block_id: string;
+        timestamp: string;
+        l1_dc_id: string;
+        l1_block_id: string;
+        l1_proof: string;
+        prev_proof: string;
+    };
+    'l3-Validations': L3Validations[];
+    proof: {
+        scheme: string;
+        proof: string;
+        nonce?: number;
+    };
 }
-
 /**
  * Example L5 Block At Rest Object
  * @name Block::L5::AtRest
@@ -977,27 +943,26 @@ export interface L4BlockAtRest {
  * ```
  */
 export interface L5BlockAtRest {
-  version: '1';
-  dcrn: 'Block::L5::AtRest';
-  header: {
-    dc_id: string;
-    current_ddss: string | null;
-    level: 5;
-    block_id: string;
-    timestamp: string;
-    prev_proof: string;
-  };
-  'l4-blocks': string[];
-  proof: {
-    scheme: string;
-    transaction_hash: string[];
-    block_last_sent_at: number;
-    network: string;
-    proof: string;
-    nonce?: number;
-  };
+    version: '1';
+    dcrn: 'Block::L5::AtRest';
+    header: {
+        dc_id: string;
+        current_ddss: string | null;
+        level: 5;
+        block_id: string;
+        timestamp: string;
+        prev_proof: string;
+    };
+    'l4-blocks': string[];
+    proof: {
+        scheme: string;
+        transaction_hash: string[];
+        block_last_sent_at: number;
+        network: string;
+        proof: string;
+        nonce?: number;
+    };
 }
-
 /**
  * @example
  * ```json
@@ -1011,22 +976,19 @@ export interface L5BlockAtRest {
  * ```
  */
 export interface PendingVerifications {
-  '2': string[];
-  '3': string[];
-  '4': string[];
-  '5': string[];
+    '2': string[];
+    '3': string[];
+    '4': string[];
+    '5': string[];
 }
-
 export interface Verifications {
-  '2': L2BlockAtRest[];
-  '3': L3BlockAtRest[];
-  '4': L4BlockAtRest[];
-  '5': L5BlockAtRest[];
+    '2': L2BlockAtRest[];
+    '3': L3BlockAtRest[];
+    '4': L4BlockAtRest[];
+    '5': L5BlockAtRest[];
 }
-
-export type levelVerifications = L2BlockAtRest[] | L3BlockAtRest[] | L4BlockAtRest[] | L5BlockAtRest[];
-export type BlockSchemaType = L1BlockAtRest | L2BlockAtRest | L3BlockAtRest | L4BlockAtRest | L5BlockAtRest;
-
+export declare type levelVerifications = L2BlockAtRest[] | L3BlockAtRest[] | L4BlockAtRest[] | L5BlockAtRest[];
+export declare type BlockSchemaType = L1BlockAtRest | L2BlockAtRest | L3BlockAtRest | L4BlockAtRest | L5BlockAtRest;
 /**
  * @example
  * ```json
@@ -1037,35 +999,29 @@ export type BlockSchemaType = L1BlockAtRest | L2BlockAtRest | L3BlockAtRest | L4
  * ```
  */
 export interface SimpleResponse {
-  success: boolean;
+    success: boolean;
 }
-
 export interface CustomTextFieldOptions {
-  weight?: number;
-  noStem?: boolean;
-  sortable?: boolean;
-  noIndex?: boolean;
+    weight?: number;
+    noStem?: boolean;
+    sortable?: boolean;
+    noIndex?: boolean;
 }
-
 export interface CustomTagFieldOptions {
-  separator?: string;
-  noIndex?: boolean;
+    separator?: string;
+    noIndex?: boolean;
 }
-
 export interface CustomNumberFieldOptions {
-  sortable?: boolean;
-  noIndex?: boolean;
+    sortable?: boolean;
+    noIndex?: boolean;
 }
-
-export type CustomIndexType = 'text' | 'tag' | 'number';
-
+export declare type CustomIndexType = 'text' | 'tag' | 'number';
 export interface TransactionTypeCustomIndex {
-  path: string;
-  fieldName: string;
-  type: CustomIndexType;
-  options?: CustomTextFieldOptions | CustomTagFieldOptions | CustomNumberFieldOptions;
+    path: string;
+    fieldName: string;
+    type: CustomIndexType;
+    options?: CustomTextFieldOptions | CustomTagFieldOptions | CustomNumberFieldOptions;
 }
-
 /**
  * @example
  * ```json
@@ -1090,19 +1046,18 @@ export interface TransactionTypeCustomIndex {
  * ```
  */
 export interface TransactionTypeResponse {
-  version: '2';
-  txn_type: string;
-  custom_indexes: TransactionTypeCustomIndex[];
-  /**
-   * If this is not a transaction type for a smart contract, this will be an empty string
-   */
-  contract_id: string;
-  /**
-   * When this transaction type has been active since
-   */
-  active_since_block: string;
+    version: '2';
+    txn_type: string;
+    custom_indexes: TransactionTypeCustomIndex[];
+    /**
+     * If this is not a transaction type for a smart contract, this will be an empty string
+     */
+    contract_id: string;
+    /**
+     * When this transaction type has been active since
+     */
+    active_since_block: string;
 }
-
 /**
  * @example
  * ```json
@@ -1131,118 +1086,116 @@ export interface TransactionTypeResponse {
  * ```
  */
 export interface TransactionTypeListResponse {
-  transaction_types: TransactionTypeResponse[];
+    transaction_types: TransactionTypeResponse[];
 }
-
 export interface PermissionsDocumentDefaultEndpoint {
-  allowed: boolean;
+    allowed: boolean;
 }
-
 export interface PermissionsDocument {
-  version: '1';
-  default_allow: boolean;
-  permissions: {
-    allow_create?: boolean;
-    allow_read?: boolean;
-    allow_update?: boolean;
-    allow_delete?: boolean;
-    apiKeys?: {
-      allow_create?: boolean;
-      allow_read?: boolean;
-      allow_update?: boolean;
-      allow_delete?: boolean;
-      create_api_key?: PermissionsDocumentDefaultEndpoint;
-      get_api_key?: PermissionsDocumentDefaultEndpoint;
-      list_api_keys?: PermissionsDocumentDefaultEndpoint;
-      delete_api_key?: PermissionsDocumentDefaultEndpoint;
-      update_api_key?: PermissionsDocumentDefaultEndpoint;
-    };
-    blocks?: {
-      allow_create?: boolean;
-      allow_read?: boolean;
-      allow_update?: boolean;
-      allow_delete?: boolean;
-      get_block?: PermissionsDocumentDefaultEndpoint;
-      query_blocks?: PermissionsDocumentDefaultEndpoint;
-    };
-    interchains?: {
-      allow_create?: boolean;
-      allow_read?: boolean;
-      allow_update?: boolean;
-      allow_delete?: boolean;
-      create_interchain?: PermissionsDocumentDefaultEndpoint;
-      update_interchain?: PermissionsDocumentDefaultEndpoint;
-      create_interchain_transaction?: PermissionsDocumentDefaultEndpoint;
-      list_interchains?: PermissionsDocumentDefaultEndpoint;
-      get_interchain?: PermissionsDocumentDefaultEndpoint;
-      delete_interchain?: PermissionsDocumentDefaultEndpoint;
-      get_default_interchain?: PermissionsDocumentDefaultEndpoint;
-      set_default_interchain?: PermissionsDocumentDefaultEndpoint;
-      get_interchain_legacy?: PermissionsDocumentDefaultEndpoint;
-      create_interchain_transaction_legacy?: PermissionsDocumentDefaultEndpoint;
-    };
-    misc?: {
-      allow_create?: boolean;
-      allow_read?: boolean;
-      allow_update?: boolean;
-      allow_delete?: boolean;
-      get_status?: PermissionsDocumentDefaultEndpoint;
-    };
-    contracts?: {
-      allow_create?: boolean;
-      allow_read?: boolean;
-      allow_update?: boolean;
-      allow_delete?: boolean;
-      get_contract?: PermissionsDocumentDefaultEndpoint;
-      get_contract_logs?: PermissionsDocumentDefaultEndpoint;
-      list_contracts?: PermissionsDocumentDefaultEndpoint;
-      create_contract?: PermissionsDocumentDefaultEndpoint;
-      update_contract?: PermissionsDocumentDefaultEndpoint;
-      delete_contract?: PermissionsDocumentDefaultEndpoint;
-      get_contract_object?: PermissionsDocumentDefaultEndpoint;
-      list_contract_objects?: PermissionsDocumentDefaultEndpoint;
-    };
-    transactionTypes?: {
-      allow_create?: boolean;
-      allow_read?: boolean;
-      allow_update?: boolean;
-      allow_delete?: boolean;
-      create_transaction_type?: PermissionsDocumentDefaultEndpoint;
-      delete_transaction_type?: PermissionsDocumentDefaultEndpoint;
-      list_transaction_types?: PermissionsDocumentDefaultEndpoint;
-      get_transaction_type?: PermissionsDocumentDefaultEndpoint;
-    };
-    transactions?: {
-      allow_create?: boolean;
-      allow_read?: boolean;
-      allow_update?: boolean;
-      allow_delete?: boolean;
-      create_transaction?: {
-        allowed?: boolean;
-        transaction_types?: {
-          [txn_type: string]: boolean;
+    version: '1';
+    default_allow: boolean;
+    permissions: {
+        allow_create?: boolean;
+        allow_read?: boolean;
+        allow_update?: boolean;
+        allow_delete?: boolean;
+        apiKeys?: {
+            allow_create?: boolean;
+            allow_read?: boolean;
+            allow_update?: boolean;
+            allow_delete?: boolean;
+            create_api_key?: PermissionsDocumentDefaultEndpoint;
+            get_api_key?: PermissionsDocumentDefaultEndpoint;
+            list_api_keys?: PermissionsDocumentDefaultEndpoint;
+            delete_api_key?: PermissionsDocumentDefaultEndpoint;
+            update_api_key?: PermissionsDocumentDefaultEndpoint;
         };
-      };
-      query_transactions?: PermissionsDocumentDefaultEndpoint;
-      get_transaction?: PermissionsDocumentDefaultEndpoint;
+        blocks?: {
+            allow_create?: boolean;
+            allow_read?: boolean;
+            allow_update?: boolean;
+            allow_delete?: boolean;
+            get_block?: PermissionsDocumentDefaultEndpoint;
+            query_blocks?: PermissionsDocumentDefaultEndpoint;
+        };
+        interchains?: {
+            allow_create?: boolean;
+            allow_read?: boolean;
+            allow_update?: boolean;
+            allow_delete?: boolean;
+            create_interchain?: PermissionsDocumentDefaultEndpoint;
+            update_interchain?: PermissionsDocumentDefaultEndpoint;
+            create_interchain_transaction?: PermissionsDocumentDefaultEndpoint;
+            list_interchains?: PermissionsDocumentDefaultEndpoint;
+            get_interchain?: PermissionsDocumentDefaultEndpoint;
+            delete_interchain?: PermissionsDocumentDefaultEndpoint;
+            get_default_interchain?: PermissionsDocumentDefaultEndpoint;
+            set_default_interchain?: PermissionsDocumentDefaultEndpoint;
+            get_interchain_legacy?: PermissionsDocumentDefaultEndpoint;
+            create_interchain_transaction_legacy?: PermissionsDocumentDefaultEndpoint;
+        };
+        misc?: {
+            allow_create?: boolean;
+            allow_read?: boolean;
+            allow_update?: boolean;
+            allow_delete?: boolean;
+            get_status?: PermissionsDocumentDefaultEndpoint;
+        };
+        contracts?: {
+            allow_create?: boolean;
+            allow_read?: boolean;
+            allow_update?: boolean;
+            allow_delete?: boolean;
+            get_contract?: PermissionsDocumentDefaultEndpoint;
+            get_contract_logs?: PermissionsDocumentDefaultEndpoint;
+            list_contracts?: PermissionsDocumentDefaultEndpoint;
+            create_contract?: PermissionsDocumentDefaultEndpoint;
+            update_contract?: PermissionsDocumentDefaultEndpoint;
+            delete_contract?: PermissionsDocumentDefaultEndpoint;
+            get_contract_object?: PermissionsDocumentDefaultEndpoint;
+            list_contract_objects?: PermissionsDocumentDefaultEndpoint;
+        };
+        transactionTypes?: {
+            allow_create?: boolean;
+            allow_read?: boolean;
+            allow_update?: boolean;
+            allow_delete?: boolean;
+            create_transaction_type?: PermissionsDocumentDefaultEndpoint;
+            delete_transaction_type?: PermissionsDocumentDefaultEndpoint;
+            list_transaction_types?: PermissionsDocumentDefaultEndpoint;
+            get_transaction_type?: PermissionsDocumentDefaultEndpoint;
+        };
+        transactions?: {
+            allow_create?: boolean;
+            allow_read?: boolean;
+            allow_update?: boolean;
+            allow_delete?: boolean;
+            create_transaction?: {
+                allowed?: boolean;
+                transaction_types?: {
+                    [txn_type: string]: boolean;
+                };
+            };
+            query_transactions?: PermissionsDocumentDefaultEndpoint;
+            get_transaction?: PermissionsDocumentDefaultEndpoint;
+        };
+        verifications?: {
+            allow_create?: boolean;
+            allow_read?: boolean;
+            allow_update?: boolean;
+            allow_delete?: boolean;
+            get_verifications?: PermissionsDocumentDefaultEndpoint;
+            get_pending_verifications?: PermissionsDocumentDefaultEndpoint;
+            query_interchain_verifications?: PermissionsDocumentDefaultEndpoint;
+        };
     };
-    verifications?: {
-      allow_create?: boolean;
-      allow_read?: boolean;
-      allow_update?: boolean;
-      allow_delete?: boolean;
-      get_verifications?: PermissionsDocumentDefaultEndpoint;
-      get_pending_verifications?: PermissionsDocumentDefaultEndpoint;
-      query_interchain_verifications?: PermissionsDocumentDefaultEndpoint;
-    };
-  };
 }
-
 export interface EternalReportV1 {
-  l1Transaction?: L1DragonchainTransactionFull;
-  l1Block?: BlockSchemaType;
-  l2Verifications?: L2BlockAtRest[];
-  l3Verifications?: L3BlockAtRest[];
-  l4Verifications?: L4BlockAtRest[];
-  l5Verifications?: L5BlockAtRest[];
+    l1Transaction?: L1DragonchainTransactionFull;
+    l1Block?: BlockSchemaType;
+    l2Verifications?: L2BlockAtRest[];
+    l3Verifications?: L3BlockAtRest[];
+    l4Verifications?: L4BlockAtRest[];
+    l5Verifications?: L5BlockAtRest[];
 }
+export {};

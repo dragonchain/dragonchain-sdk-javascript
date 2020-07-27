@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.4.0
+
+- **Feature:**
+  - Add support for querying subsequent interchain verifications
+- **Bug Fix:**
+  - Fix type import on `L2BlockAtRest` from current_ddds to current_ddss
+
 ## 4.3.4
 
 - **Development:**
