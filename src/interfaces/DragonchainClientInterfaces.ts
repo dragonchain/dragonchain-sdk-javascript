@@ -1239,10 +1239,10 @@ export interface PermissionsDocument {
 }
 
 export interface EternalReportV1 {
-  l1Transaction: L1DragonchainTransactionFull;
-  l1Block: BlockSchemaType;
-  l2Verifications: L2BlockAtRest[];
-  l3Verifications: L3BlockAtRest[];
-  l4Verifications: L4BlockAtRest[];
-  l5Verifications: L5BlockAtRest[];
+  l1Transaction?: L1DragonchainTransactionFull;
+  l1Block?: BlockSchemaType;
+  l2Verifications?: L2BlockAtRest[];
+  l3Verifications?: L3BlockAtRest[];
+  l4Verifications?: L4BlockAtRest[];
+  l5Verifications?: L5BlockAtRest[];
 }

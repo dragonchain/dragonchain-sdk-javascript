@@ -1463,20 +1463,24 @@ export class DragonchainClient {
   }) => {
     if (!options.transactionId) throw new FailureByDesign('PARAM_ERROR', 'Parameter `transactionId` is required');
     const transaction = await this.getTransaction({ transactionId: options.transactionId });
-    if (transaction && !transaction.ok) return { ok: false, status: transaction.status, response: transaction.response };
+    if (transaction && !transaction.ok) return { ok: false, status: transaction.status, response: {} };
     const blockId = transaction.response.header.block_id;
     const block = await this.getBlock({ blockId });
-    if (block && !block.ok) return { ok: false, status: block.status, response: block.response };
+    if (block && !block.ok) return { ok: false, status: block.status, response: {} };
     const verifications = await this.getVerifications({ blockId });
     const l5verifications = await this.queryInterchainTransactions({ blockId });
     return {
-      l1Transaction: transaction.response,
-      l1Block: block.response,
-      l2Verifications: verifications.response && verifications.response['2'],
-      l3Verifications: verifications.response && verifications.response['3'],
-      l4Verifications: verifications.response && verifications.response['4'],
-      l5Verifications: l5verifications && l5verifications.response,
-    } as EternalReportV1;
+      ok: true,
+      status: 200,
+      response: {
+        l1Transaction: transaction.response,
+        l1Block: block.response,
+        l2Verifications: verifications.response && verifications.response['2'],
+        l3Verifications: verifications.response && verifications.response['3'],
+        l4Verifications: verifications.response && verifications.response['4'],
+        l5Verifications: l5verifications && l5verifications.response,
+      },
+    } as Response<EternalReportV1>;
   };
 
   /**
